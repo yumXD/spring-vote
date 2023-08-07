@@ -38,6 +38,15 @@ public class SecurityConfig {
                                 .logoutSuccessUrl("/")
                 )
         ;
+
+        http
+                .authorizeHttpRequests(authorizeRequests ->
+                        authorizeRequests
+                                .requestMatchers("/css/**", "/js/**", "/img/**", "/", "/members/**", "/images/**").permitAll()
+                                .requestMatchers("/admin/**").hasRole("ADMIN")
+                                .anyRequest().authenticated()
+                )
+        ;
         return http.build();
     }
 
