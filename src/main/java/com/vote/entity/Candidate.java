@@ -1,5 +1,6 @@
 package com.vote.entity;
 
+import com.vote.dto.CandidateFormDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,4 +22,9 @@ public class Candidate extends BaseEntity {
 
     @Column(nullable = false)
     private String description;
+
+    public void updateCandidate(CandidateFormDto candidateFormDto) {
+        this.name = candidateFormDto.getName();
+        this.description = candidateFormDto.getDescription();
+    }
 }

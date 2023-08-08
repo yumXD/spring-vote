@@ -32,13 +32,10 @@
   </th:block>
 
   <div layout:fragment="content">
-    <form
-      role="form"
-      th:action="@{/admin/candidate/new}"
-      th:object="${candidateFormDto}"
-      method="post"
-    >
+    <form role="form" th:object="${candidateFormDto}" method="post">
       <p class="h2">후보자 등록</p>
+
+      <input type="hidden" th:field="*{id}" />
 
       <div class="input-group">
         <div class="input-group-prepend">
@@ -78,8 +75,30 @@
       >
         Incorrect data
       </p>
-
-      <button type="submit" class="btn btn-primary">등록</button>
+      <div
+        th:if="${#strings.isEmpty(candidateFormDto.id)}"
+        style="text-align: center"
+      >
+        <button
+          th:formaction="@{/admin/candidate/new}"
+          type="submit"
+          class="btn btn-primary"
+        >
+          저장
+        </button>
+      </div>
+      <div
+        th:unless="${#strings.isEmpty(candidateFormDto.id)}"
+        style="text-align: center"
+      >
+        <button
+          th:formaction="@{'/admin/candidate/' + ${candidateFormDto.id} }"
+          type="submit"
+          class="btn btn-primary"
+        >
+          수정
+        </button>
+      </div>
     </form>
   </div>
 </html>

@@ -22,4 +22,12 @@ public class CandidateFormDto {
         candidate.setDescription(description);
         return candidate;
     }
+
+    public static CandidateFormDto of(Candidate candidate) {
+        CandidateFormDto candidateFormDto = new CandidateFormDto();
+        candidateFormDto.setId(candidate.getId());
+        candidateFormDto.setName(candidate.getName());
+        candidateFormDto.setDescription(candidate.getDescription());
+        return candidateFormDto;
+    }
 }
