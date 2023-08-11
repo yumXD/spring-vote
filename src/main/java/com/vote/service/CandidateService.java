@@ -1,10 +1,13 @@
 package com.vote.service;
 
 import com.vote.dto.CandidateFormDto;
+import com.vote.dto.CandidateSearchDto;
 import com.vote.entity.Candidate;
 import com.vote.repository.CandidateRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,5 +39,10 @@ public class CandidateService {
         candidate.updateCandidate(candidateFormDto);
 
         return candidate;
+    }
+
+    @Transactional(readOnly = true)
+    public Page<Candidate> getAdminCandidatePage(CandidateSearchDto candidateSearchDto, Pageable pageable) {
+        return candidateRepository.getAdminCandidatePage(candidateSearchDto, pageable);
     }
 }

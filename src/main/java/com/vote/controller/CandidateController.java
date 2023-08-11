@@ -1,16 +1,23 @@
 package com.vote.controller;
 
 import com.vote.dto.CandidateFormDto;
+import com.vote.dto.CandidateSearchDto;
+import com.vote.entity.Candidate;
 import com.vote.service.CandidateService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+
+import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
@@ -66,5 +73,15 @@ public class CandidateController {
             return "candidate/candidateForm";
         }
         return "redirect:/";
+    }
+
+    @GetMapping(value = {"/admin/candidates", "/admin/candidates/{page}"})
+    public String candidateManage(CandidateSearchDto candidateSearchDto, @PathVariable("page") Optional<Integer> page, Model model) {
+        Pageable pageable = PageRequest.of(page.isPresent() ? page.get() : 0, 3);
+        Page<Candidate> candidates = candidateService.getAdminCandidatePage(candidateSearchDto, pageable);
+        model.addAttribute("candidates", candidates);
+        model.addAttribute("candidateSearchDto", candidateSearchDto);
+        model.addAttribute("maxPage", 5);
+        return "candidate/candidateMng";
     }
 }
