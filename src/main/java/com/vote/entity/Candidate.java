@@ -23,6 +23,10 @@ public class Candidate extends BaseEntity {
     @Column(nullable = false)
     private String description;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "election_id")
+    private Election election;
+
     public void updateCandidate(CandidateFormDto candidateFormDto) {
         this.name = candidateFormDto.getName();
         this.description = candidateFormDto.getDescription();

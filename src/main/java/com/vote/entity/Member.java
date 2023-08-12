@@ -9,6 +9,8 @@ import lombok.ToString;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "member")
@@ -34,6 +36,14 @@ public class Member extends BaseEntity {
     private Role role;
 
     private LocalDate birth;
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Election> elections = new ArrayList<>();
+
+    public void addElection(Election election) {
+        elections.add(election);
+        election.setMember(this);
+    }
 
     public static Member createMember(MemberFormDto memberFormDto, PasswordEncoder passwordEncoder) {
         Member member = new Member();
