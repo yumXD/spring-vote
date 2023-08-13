@@ -4,6 +4,7 @@ import com.vote.dto.CandidateFormDto;
 import com.vote.dto.CandidateSearchDto;
 import com.vote.entity.Candidate;
 import com.vote.service.CandidateService;
+import com.vote.service.ElectionService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.security.Principal;
 import java.util.Optional;
 
 @Controller
@@ -24,27 +26,36 @@ import java.util.Optional;
 public class CandidateController {
     private final CandidateService candidateService;
 
-    @GetMapping("/admin/candidate/new")
-    public String candidateForm(Model model) {
-        model.addAttribute("candidateFormDto", new CandidateFormDto());
+    private final ElectionService electionService;
+
+    @GetMapping("/election/{electionId}/candidate/new")
+    public String candidateForm(@PathVariable("electionId") Long electionId, Principal principal, Model model) {
+        //후보자 추가 폼
+
+        try {
+            model.addAttribute("electionId", electionId);
+            model.addAttribute("candidateFormDto", new CandidateFormDto());
+        } catch (EntityNotFoundException e) {
+            model.addAttribute("errorMessage", "존재하지 않는 선거 페이지 입니다.");
+            return "error/error";
+        }
         return "candidate/candidateForm";
     }
 
-    @PostMapping("/admin/candidate/new")
-    public String candidateNew(@Valid CandidateFormDto candidateFormDto, BindingResult bindingResult, Model model) {
-
+    @PostMapping("/election/{electionId}/candidate/new")
+    public String candidateNew(@PathVariable("electionId") Long electionId, @Valid CandidateFormDto candidateFormDto, BindingResult bindingResult, Model model) {
+        //후보자 추가 처리
         if (bindingResult.hasErrors()) {
             return "candidate/candidateForm";
         }
 
         try {
-            candidateService.saveCandidate(candidateFormDto);
+            candidateService.saveCandidate(electionId, candidateFormDto);
         } catch (Exception e) {
-            model.addAttribute("errorMessage", "상품 등록 중 에러가 발생하였습니다.");
-            return "candidate/candidateForm";
+            model.addAttribute("errorMessage", "후보자 등록 중 에러가 발생하였습니다.");
+            return "error/error";
         }
-
-        return "redirect:/";
+        return "redirect:/election/" + electionId;
     }
 
     @GetMapping("/admin/candidate/{candidateId}")

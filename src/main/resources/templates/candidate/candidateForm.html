@@ -80,7 +80,7 @@
         style="text-align: center"
       >
         <button
-          th:formaction="@{/admin/candidate/new}"
+          th:formaction="@{'/election/'+${electionId}+'/candidate/new'}"
           type="submit"
           class="btn btn-primary"
         >
@@ -92,7 +92,7 @@
         style="text-align: center"
       >
         <button
-          th:formaction="@{'/admin/candidate/' + ${candidateFormDto.id} }"
+          th:formaction="@{'/election/' + ${electionId} +'/candidate/update/' + ${candidateFormDto.id}}"
           type="submit"
           class="btn btn-primary"
         >

@@ -28,4 +28,9 @@ public class Election extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
+
+    public void addCandidate(Candidate candidate) {
+        candidates.add(candidate);
+        candidate.setElection(this);
+    }
 }

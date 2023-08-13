@@ -3,7 +3,9 @@ package com.vote.service;
 import com.vote.dto.CandidateFormDto;
 import com.vote.dto.CandidateSearchDto;
 import com.vote.entity.Candidate;
+import com.vote.entity.Election;
 import com.vote.repository.CandidateRepository;
+import com.vote.repository.ElectionRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -16,14 +18,21 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class CandidateService {
     private final CandidateRepository candidateRepository;
+    private final ElectionRepository electionRepository;
 
-    public Candidate saveCandidate(CandidateFormDto candidateFormDto) {
+    public Long saveCandidate(Long electionId, CandidateFormDto candidateFormDto) {
+
+        //선거 찾기
+        Election election = electionRepository.findById(electionId).orElseThrow(EntityNotFoundException::new);
 
         //후보자 등록
         Candidate candidate = candidateFormDto.toEntity();
+
+        election.addCandidate(candidate);
+
         candidateRepository.save(candidate);
 
-        return candidate;
+        return candidate.getId();
     }
 
     @Transactional(readOnly = true)

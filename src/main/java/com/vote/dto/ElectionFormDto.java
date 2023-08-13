@@ -19,6 +19,13 @@ public class ElectionFormDto {
 
     private Boolean isActive;
 
+    public static ElectionFormDto of(Election election) {
+        ElectionFormDto electionFormDto = new ElectionFormDto();
+        electionFormDto.setId(election.getId());
+        electionFormDto.setTitle(election.getTitle());
+        return electionFormDto;
+    }
+
     public Election toEntity() {
         Election election = new Election();
         election.setTitle(title);
