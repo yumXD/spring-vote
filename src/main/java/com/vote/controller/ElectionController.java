@@ -74,4 +74,32 @@ public class ElectionController {
         }
         return "election/electionSearch";
     }
+
+    @GetMapping("/election/update/{electionId}")
+    public String electionUpdate(@PathVariable("electionId") Long electionId, Principal principal, Model model) {
+
+        try {
+            ElectionFormDto electionFormDto = electionService.getElectionDtl(electionId);
+            model.addAttribute("electionFormDto", electionFormDto);
+        } catch (EntityNotFoundException e) {
+            model.addAttribute("errorMessage", "존재하지 않는 선거 수정 페이지입니다.");
+            return "error/error";
+        }
+        return "election/electionForm";
+    }
+
+    @PostMapping("/election/update/{electionId}")
+    public String electionUpdate(@Valid ElectionFormDto electionFormDto, BindingResult bindingResult, Model model) {
+        if (bindingResult.hasErrors()) {
+            return "election/electionForm";
+        }
+
+        try {
+            electionService.updateElection(electionFormDto);
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "선거 수정 중 에러가 발생하였습니다.");
+            return "error/error";
+        }
+        return "redirect:/election/" + electionFormDto.getId();
+    }
 }

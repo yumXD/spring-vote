@@ -1,5 +1,6 @@
 package com.vote.entity;
 
+import com.vote.dto.ElectionFormDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -32,5 +33,9 @@ public class Election extends BaseEntity {
     public void addCandidate(Candidate candidate) {
         candidates.add(candidate);
         candidate.setElection(this);
+    }
+
+    public void updateElection(ElectionFormDto electionFormDto) {
+        this.title = electionFormDto.getTitle();
     }
 }

@@ -62,4 +62,11 @@ public class ElectionService {
         Election election = electionRepository.findById(electionId).orElseThrow(EntityNotFoundException::new);
         return election.getMember().getEmail();
     }
+
+    public Long updateElection(ElectionFormDto electionFormDto) {
+        //선거 수정
+        Election election = electionRepository.findById(electionFormDto.getId()).orElseThrow(EntityNotFoundException::new);
+        election.updateElection(electionFormDto);
+        return election.getId();
+    }
 }
