@@ -95,4 +95,20 @@ public class CandidateController {
         model.addAttribute("maxPage", 5);
         return "candidate/candidateMng";
     }
+
+    @GetMapping("/election/{electionId}/candidate/{candidateId}")
+    public String candidateDtlSearch(@PathVariable("electionId") Long electionId, @PathVariable("candidateId") Long candidateId, Model model) {
+        //특정 후보자 조회
+        try {
+            CandidateFormDto candidateFormDto = candidateService.getCandidateDtl(candidateId);
+            String email = electionService.getEmail(electionId);
+            model.addAttribute("email", email);
+            model.addAttribute("electionId", electionId);
+            model.addAttribute("candidateFormDto", candidateFormDto);
+        } catch (EntityNotFoundException e) {
+            model.addAttribute("errorMessage", "존재하지 않는 후보자입니다.");
+            return "error/error";
+        }
+        return "candidate/candidateDtlSearch";
+    }
 }

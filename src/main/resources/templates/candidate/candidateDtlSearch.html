@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="~{layouts/layout1}"
+>
+  <div layout:fragment="content">
+    <div class="container mt-5">
+      <h2 class="mb-4">후보자 정보</h2>
+
+      <table class="table table-bordered">
+        <tbody>
+          <tr>
+            <!-- 여기에 col-6 클래스를 추가 -->
+            <td class="col-6"><strong>후보자 이름:</strong></td>
+            <td class="col-6" th:text="${candidateFormDto.name}"></td>
+          </tr>
+          <tr>
+            <!-- 여기에 col-6 클래스를 추가 -->
+            <td class="col-6"><strong>후보자 설명:</strong></td>
+            <td class="col-6" th:text="${candidateFormDto.description}"></td>
+          </tr>
+        </tbody>
+      </table>
+      <button
+        sec:authorize="isAuthenticated()"
+        th:if="${email != null and email == #authentication.getPrincipal().getUsername()}"
+        type="button"
+        class="btn btn-primary"
+        th:onclick="'location.href=\'/election/'+${electionId}+'/candidate/update/' + ${candidateFormDto.id} + '\''"
+      >
+        후보자 수정
+      </button>
+    </div>
+  </div>
+</html>
