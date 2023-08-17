@@ -30,6 +30,9 @@ public class Election extends BaseEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
+    @OneToMany(mappedBy = "election", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Vote> votes = new ArrayList<>();
+
     public void addCandidate(Candidate candidate) {
         candidates.add(candidate);
         candidate.setElection(this);
@@ -37,5 +40,10 @@ public class Election extends BaseEntity {
 
     public void updateElection(ElectionFormDto electionFormDto) {
         this.title = electionFormDto.getTitle();
+    }
+
+    public void addVote(Vote vote) {
+        votes.add(vote);
+        vote.setElection(this);
     }
 }

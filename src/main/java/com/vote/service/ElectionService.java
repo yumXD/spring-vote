@@ -69,4 +69,8 @@ public class ElectionService {
         election.updateElection(electionFormDto);
         return election.getId();
     }
+
+    public Election getElection(Long electionId) {
+        return electionRepository.findById(electionId).orElseThrow(EntityNotFoundException::new);
+    }
 }

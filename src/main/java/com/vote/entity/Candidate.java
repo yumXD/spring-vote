@@ -6,6 +6,9 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "candidate")
 @Getter
@@ -27,8 +30,16 @@ public class Candidate extends BaseEntity {
     @JoinColumn(name = "election_id")
     private Election election;
 
+    @OneToMany(mappedBy = "candidate", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Vote> votes = new ArrayList<>();
+
     public void updateCandidate(CandidateFormDto candidateFormDto) {
         this.name = candidateFormDto.getName();
         this.description = candidateFormDto.getDescription();
+    }
+
+    public void addVote(Vote vote) {
+        votes.add(vote);
+        vote.setCandidate(this);
     }
 }

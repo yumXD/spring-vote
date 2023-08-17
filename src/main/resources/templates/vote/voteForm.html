@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="~{layouts/layout1}"
+>
+  <div layout:fragment="content">
+    <div class="container mt-5">
+      <form
+        action="#"
+        th:action="@{'/election/'+${electionId}+'/vote'}"
+        th:object="${voteFormDto}"
+        method="post"
+      >
+        <h3>후보자 목록</h3>
+        <span
+          th:if="${#fields.hasErrors('candidateId')}"
+          th:errors="*{candidateId}"
+          class="text-danger"
+        ></span>
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th>투표</th>
+              <th>후보자 아이디</th>
+              <th>후보자 이름</th>
+              <th>후보자 설명</th>
+              <th>등록자</th>
+              <th>등록시간</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              th:unless="${#lists.isEmpty(candidates)}"
+              th:each="candidate : ${candidates}"
+            >
+              <td>
+                <input
+                  type="radio"
+                  th:value="${candidate.id}"
+                  th:name="candidateId"
+                />
+              </td>
+              <td th:text="${candidate.id}"></td>
+              <td th:text="${candidate.name}"></td>
+              <td th:text="${candidate.description}"></td>
+              <td th:text="${candidate.createdBy}"></td>
+              <td th:text="${candidate.regTime}"></td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(candidates)}">
+              <td colspan="6" class="text-center">
+                후보자가 등록되지 않았습니다.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <button type="submit" class="btn btn-primary">투표하기</button>
+      </form>
+    </div>
+  </div>
+</html>

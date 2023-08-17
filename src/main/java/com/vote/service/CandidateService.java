@@ -54,4 +54,8 @@ public class CandidateService {
     public Page<Candidate> getAdminCandidatePage(CandidateSearchDto candidateSearchDto, Pageable pageable) {
         return candidateRepository.getAdminCandidatePage(candidateSearchDto, pageable);
     }
+
+    public Candidate getCandidate(Long candidateId) {
+        return candidateRepository.findById(candidateId).orElseThrow(EntityNotFoundException::new);
+    }
 }

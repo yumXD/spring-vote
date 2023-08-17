@@ -40,6 +40,9 @@ public class Member extends BaseEntity {
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Election> elections = new ArrayList<>();
 
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Vote> votes = new ArrayList<>();
+
     public void addElection(Election election) {
         elections.add(election);
         election.setMember(this);
@@ -55,5 +58,10 @@ public class Member extends BaseEntity {
         member.setBirth(memberFormDto.getBirth());
         member.setRole(Role.ADMIN);
         return member;
+    }
+
+    public void addVote(Vote vote) {
+        votes.add(vote);
+        vote.setMember(this);
     }
 }
