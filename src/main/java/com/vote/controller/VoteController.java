@@ -42,6 +42,9 @@ public class VoteController {
             return "vote/voteForm";
         }
 
+        //중복 체크
+        voteService.validateDuplicateVote(user.getUsername(), electionId);
+
         try {
             voteService.createVote(user.getUsername(), electionId, voteFormDto.getCandidateId());
         } catch (Exception e) {

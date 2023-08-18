@@ -4,6 +4,7 @@ import com.vote.entity.Candidate;
 import com.vote.entity.Election;
 import com.vote.entity.Member;
 import com.vote.entity.Vote;
+import com.vote.exception.DuplicateVoteException;
 import com.vote.repository.ElectionRepository;
 import com.vote.repository.VoteRepository;
 import lombok.RequiredArgsConstructor;
@@ -29,5 +30,13 @@ public class VoteService {
 
         voteRepository.save(vote);
         return vote;
+    }
+
+    public void validateDuplicateVote(String username, Long electionId) {
+        Member member = memberService.getMember(username);
+        Vote findVote = voteRepository.findByElectionIdAndMemberId(electionId, member.getId());
+        if (findVote != null) {
+            throw new DuplicateVoteException("이미 투표했습니다.");
+        }
     }
 }
