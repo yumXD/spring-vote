@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -27,6 +28,7 @@ import java.util.Optional;
 public class ElectionController {
     private final ElectionService electionService;
 
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/election/new")
     public String electionForm(Model model) {
         model.addAttribute("electionFormDto", new ElectionFormDto());
@@ -75,6 +77,7 @@ public class ElectionController {
         return "election/electionSearch";
     }
 
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/election/update/{electionId}")
     public String electionUpdate(@PathVariable("electionId") Long electionId, Principal principal, Model model) {
 

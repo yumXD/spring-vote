@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -28,6 +29,7 @@ public class CandidateController {
 
     private final ElectionService electionService;
 
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/election/{electionId}/candidate/new")
     public String candidateForm(@PathVariable("electionId") Long electionId, Principal principal, Model model) {
         //후보자 추가 폼
