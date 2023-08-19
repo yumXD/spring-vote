@@ -60,21 +60,25 @@ public class CandidateController {
         return "redirect:/election/" + electionId;
     }
 
-    @GetMapping("/admin/candidate/{candidateId}")
-    public String candidateDtl(@PathVariable("candidateId") Long candidateId, Model model) {
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/election/{electionId}/candidate/update/{candidateId}")
+    public String candidateDtl(@PathVariable("electionId") Long electionId, @PathVariable("candidateId") Long candidateId, Principal principal, Model model) {
+        //후보자 수정 폼 페이지
+
         try {
             CandidateFormDto candidateFormDto = candidateService.getCandidateDtl(candidateId);
+            model.addAttribute("electionId", electionId);
             model.addAttribute("candidateFormDto", candidateFormDto);
         } catch (EntityNotFoundException e) {
             model.addAttribute("errorMessage", "존재하지 않는 후보자입니다.");
-            model.addAttribute("candidateFormDto", new CandidateFormDto());
-            return "candidate/candidateForm";
+            return "error/error";
         }
         return "candidate/candidateForm";
     }
 
-    @PostMapping("/admin/candidate/{candidateId}")
-    public String candidateUpdate(@Valid CandidateFormDto candidateFormDto, BindingResult bindingResult, Model model) {
+    @PostMapping("/election/{electionId}/candidate/update/{candidateId}")
+    public String candidateUpdate(@Valid CandidateFormDto candidateFormDto, BindingResult bindingResult, @PathVariable("electionId") Long electionId, @PathVariable("candidateId") Long candidateId, Model model) {
+        //특정 후보자 수정처리
         if (bindingResult.hasErrors()) {
             return "candidate/candidateForm";
         }
@@ -83,9 +87,9 @@ public class CandidateController {
             candidateService.updateCandidate(candidateFormDto);
         } catch (Exception e) {
             model.addAttribute("errorMessage", "후보자 수정 중 에러가 발생하였습니다.");
-            return "candidate/candidateForm";
+            return "error/error";
         }
-        return "redirect:/";
+        return "redirect:/election/" + electionId + "/candidate/" + candidateId;
     }
 
     @GetMapping(value = {"/admin/candidates", "/admin/candidates/{page}"})
