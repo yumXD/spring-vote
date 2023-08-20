@@ -34,6 +34,8 @@ public class CandidateController {
     public String candidateForm(@PathVariable("electionId") Long electionId, Principal principal, Model model) {
         //후보자 추가 폼
 
+        electionService.certification(electionId, principal.getName());
+
         try {
             model.addAttribute("electionId", electionId);
             model.addAttribute("candidateFormDto", new CandidateFormDto());
@@ -64,6 +66,8 @@ public class CandidateController {
     @GetMapping("/election/{electionId}/candidate/update/{candidateId}")
     public String candidateDtl(@PathVariable("electionId") Long electionId, @PathVariable("candidateId") Long candidateId, Principal principal, Model model) {
         //후보자 수정 폼 페이지
+
+        electionService.certification(electionId, principal.getName());
 
         try {
             CandidateFormDto candidateFormDto = candidateService.getCandidateDtl(candidateId);

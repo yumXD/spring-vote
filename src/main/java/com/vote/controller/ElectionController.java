@@ -81,6 +81,8 @@ public class ElectionController {
     @GetMapping("/election/update/{electionId}")
     public String electionUpdate(@PathVariable("electionId") Long electionId, Principal principal, Model model) {
 
+        electionService.certification(electionId, principal.getName());
+
         try {
             ElectionFormDto electionFormDto = electionService.getElectionDtl(electionId);
             model.addAttribute("electionFormDto", electionFormDto);

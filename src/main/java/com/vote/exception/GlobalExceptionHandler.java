@@ -13,4 +13,11 @@ public class GlobalExceptionHandler {
 
         return "error/error";
     }
+
+    @ExceptionHandler(CertificationException.class)
+    public String certificationException(CertificationException e, Model model) {
+        model.addAttribute("errorMessage", e.getMessage());
+
+        return "error/error";
+    }
 }

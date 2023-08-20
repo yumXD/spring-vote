@@ -5,6 +5,7 @@ import com.vote.dto.ElectionFormDto;
 import com.vote.entity.Candidate;
 import com.vote.entity.Election;
 import com.vote.entity.Member;
+import com.vote.exception.CertificationException;
 import com.vote.repository.ElectionRepository;
 import com.vote.repository.MemberRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -72,5 +73,16 @@ public class ElectionService {
 
     public Election getElection(Long electionId) {
         return electionRepository.findById(electionId).orElseThrow(EntityNotFoundException::new);
+    }
+
+    public void certification(Long electionId, String email) {
+        Election election = electionRepository.findById(electionId).orElse(null);
+
+        if (election != null) {
+            if (!election.getMember().getEmail().equals(email)) {
+                throw new CertificationException("인증이 없어 권한이 없습니다.");
+            }
+        }
+
     }
 }
