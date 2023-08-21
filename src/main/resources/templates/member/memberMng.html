@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="~{layouts/layout1}"
+>
+  <!-- 사용자 스크립트 추가 -->
+  <th:block layout:fragment="script">
+    <script th:inline="javascript">
+      const page_elements = document.getElementsByClassName("page-link");
+      Array.from(page_elements).forEach(function (element) {
+        element.addEventListener("click", function () {
+          document.getElementById("page").value = this.dataset.page;
+          document.getElementById("searchForm").submit();
+        });
+      });
+      const btn_search = document.getElementById("btn_search");
+      btn_search.addEventListener("click", function () {
+        document.getElementById("kw").value =
+          document.getElementById("search_kw").value;
+        document.getElementById("page").value = 0; // 검색버튼을 클릭할 경우 0페이지부터 조회한다.
+        document.getElementById("searchForm").submit();
+      });
+    </script>
+  </th:block>
+
+  <div layout:fragment="content">
+    <div class="row my-3">
+      <div class="col-6">
+        <div class="input-group">
+          <input
+            type="text"
+            id="search_kw"
+            class="form-control"
+            th:value="${kw}"
+          />
+          <button
+            class="btn btn-outline-secondary"
+            type="button"
+            id="btn_search"
+          >
+            찾기
+          </button>
+        </div>
+      </div>
+    </div>
+    <table class="table">
+      <thead class="table-dark">
+        <tr>
+          <th>번호</th>
+          <th>회원아이디</th>
+          <th>회원이름</th>
+          <th>회원이메일</th>
+          <th>회원권한</th>
+          <td>등록일</td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="member, loop : ${members}">
+          <td
+            th:text="${members.getTotalElements - (members.number * members.size) - loop.index}"
+          ></td>
+          <td th:text="${member.id}"></td>
+          <td>
+            <a
+              th:href="'/admin/member/'+${member.id}"
+              th:text="${member.name}"
+            ></a>
+          </td>
+          <td th:text="${member.email}"></td>
+          <td th:text="${member.role}"></td>
+          <td th:text="${member.regTime}"></td>
+        </tr>
+      </tbody>
+    </table>
+    <!-- 페이징처리 시작 -->
+    <div th:if="${!members.isEmpty()}">
+      <ul class="pagination justify-content-center">
+        <li
+          class="page-item"
+          th:classappend="${!members.hasPrevious} ? 'disabled'"
+        >
+          <a
+            class="page-link"
+            href="javascript:void(0)"
+            th:data-page="${members.number-1}"
+          >
+            <span>이전</span>
+          </a>
+        </li>
+        <li
+          th:each="page: ${#numbers.sequence(0, members.totalPages-1)}"
+          th:if="${page >= members.number-5 and page <= members.number+5}"
+          th:classappend="${page == members.number} ? 'active'"
+          class="page-item"
+        >
+          <a
+            th:text="${page}"
+            class="page-link"
+            href="javascript:void(0)"
+            th:data-page="${page}"
+          ></a>
+        </li>
+        <li class="page-item" th:classappend="${!members.hasNext} ? 'disabled'">
+          <a
+            class="page-link"
+            href="javascript:void(0)"
+            th:data-page="${members.number+1}"
+          >
+            <span>다음</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+    <!-- 페이징처리 끝 -->
+    <form th:action="@{/admin/members}" method="get" id="searchForm">
+      <input type="hidden" id="kw" name="kw" th:value="${kw}" />
+      <input type="hidden" id="page" name="page" th:value="${members.number}" />
+    </form>
+  </div>
+</html>

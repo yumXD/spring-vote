@@ -32,6 +32,9 @@
           <li class="nav-item">
             <a class="nav-link" href="/elections">선거 목록</a>
           </li>
+          <li class="nav-item" sec:authorize="hasAnyAuthority('ROLE_ADMIN')">
+            <a class="nav-link" href="/admin/members">회원 관리</a>
+          </li>
         </ul>
         <form class="form-inline my-2 my-lg-0" th:action="@{/}" method="get">
           <input
