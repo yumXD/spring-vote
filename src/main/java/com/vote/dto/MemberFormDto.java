@@ -1,5 +1,6 @@
 package com.vote.dto;
 
+import com.vote.entity.Member;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,6 +12,8 @@ import java.time.LocalDate;
 @Getter
 @Setter
 public class MemberFormDto {
+    private Long id;
+
     @NotBlank(message = "이름은 필수 입력 값입니다.")
     private String name;
 
@@ -29,4 +32,15 @@ public class MemberFormDto {
     @PastOrPresent(message = "생일은 현재 날짜나 과거 날짜여야 합니다.")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate birth;
+
+    public static MemberFormDto of(Member member) {
+        MemberFormDto memberFormDto = new MemberFormDto();
+        memberFormDto.setId(member.getId());
+        memberFormDto.setName(member.getName());
+        memberFormDto.setEmail(member.getEmail());
+        memberFormDto.setAddress(member.getAddress());
+        memberFormDto.setBirth(member.getBirth());
+        return memberFormDto;
+
+    }
 }
