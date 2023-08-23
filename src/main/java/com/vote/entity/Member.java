@@ -64,4 +64,8 @@ public class Member extends BaseEntity {
         votes.add(vote);
         vote.setMember(this);
     }
+
+    public void updatePassword(String password, PasswordEncoder passwordEncoder) {
+        this.password = passwordEncoder.encode(password);
+    }
 }

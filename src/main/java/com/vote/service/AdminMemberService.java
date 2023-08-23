@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,5 +31,11 @@ public class AdminMemberService {
     public MemberFormDto getMemberDtl(Long memberId) {
         Member member = adminMemberRepository.findById(memberId).orElseThrow(EntityNotFoundException::new);
         return MemberFormDto.of(member);
+    }
+
+    public Long updatePassword(MemberFormDto memberFormDto, Long memberId, PasswordEncoder passwordEncoder) {
+        Member member = adminMemberRepository.findById(memberId).orElseThrow(EntityNotFoundException::new);
+        member.updatePassword(memberFormDto.getPassword(), passwordEncoder);
+        return member.getId();
     }
 }
