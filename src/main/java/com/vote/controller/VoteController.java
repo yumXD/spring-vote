@@ -1,9 +1,11 @@
 package com.vote.controller;
 
+import com.vote.dto.CandidatesVoteSearchDto;
 import com.vote.dto.VoteFormDto;
 import com.vote.entity.Candidate;
 import com.vote.service.ElectionService;
 import com.vote.service.VoteService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -52,5 +54,21 @@ public class VoteController {
             return "error/error";
         }
         return "redirect:/";
+    }
+
+    @GetMapping("/election/{electionId}/status")
+    public String voteStatus(@PathVariable("electionId") Long electionId, Model model) {
+        try {
+            Long totalVotes = voteService.getElectionTotalVotes(electionId);
+            List<CandidatesVoteSearchDto> candidatesVoteCount = voteService.getCandidateVoteStatistics(electionId);
+            List<CandidatesVoteSearchDto> topCandidates = voteService.getTopVotedCandidate(electionId);
+            model.addAttribute("totalVotes", totalVotes);
+            model.addAttribute("candidatesVoteCount", candidatesVoteCount);
+            model.addAttribute("topCandidates", topCandidates);
+        } catch (EntityNotFoundException e) {
+            model.addAttribute("errorMessage", "존재하지 않는 투표정보 입니다.");
+            return "error/error";
+        }
+        return "vote/voteStatus";
     }
 }
