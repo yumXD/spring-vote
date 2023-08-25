@@ -80,8 +80,9 @@ public class ElectionController {
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/election/update/{electionId}")
     public String electionUpdate(@PathVariable("electionId") Long electionId, Principal principal, Model model) {
-
+        // 선거 수정 폼
         electionService.certification(electionId, principal.getName());
+        electionService.validateElectionStart(electionId);
 
         try {
             ElectionFormDto electionFormDto = electionService.getElectionDtl(electionId);

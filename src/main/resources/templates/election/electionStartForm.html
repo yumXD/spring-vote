@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="~{layouts/layout1}"
+>
+  <!-- 사용자 CSS 추가 -->
+  <th:block layout:fragment="css">
+    <style>
+      .input-group {
+        margin-bottom: 15px;
+      }
+      .img-div {
+        margin-bottom: 10px;
+      }
+      .fieldError {
+        color: #bd2130;
+      }
+    </style>
+  </th:block>
+
+  <!-- 사용자 스크립트 추가 -->
+  <th:block layout:fragment="script">
+    <script th:inline="javascript">
+      $(document).ready(function(){
+          var errorMessage = [[${errorMessage}]];
+          if(errorMessage != null){
+              alert(errorMessage);
+          }
+      });
+    </script>
+  </th:block>
+
+  <div layout:fragment="content">
+    <form role="form" th:object="${electionStartFormDto}" method="post">
+      <p class="h2">투표 시작 & 종료</p>
+
+      <input type="hidden" th:field="*{id}" />
+
+      <div class="input-group">
+        <div class="input-group-prepend">
+          <span class="input-group-text">제한시간</span>
+        </div>
+        <input
+          type="number"
+          name="durationInSeconds"
+          th:field="*{durationInSeconds}"
+          class="form-control"
+          placeholder="제한시간(초)을 입력해주세요"
+        />
+      </div>
+      <p
+        class="fieldError"
+        th:if="${#fields.hasErrors('durationInSeconds')}"
+        th:errors="*{durationInSeconds}"
+      >
+        Incorrect data
+      </p>
+
+      <div
+        th:if="${#strings.isEmpty(electionStartFormDto.id)}"
+        style="text-align: center"
+      >
+        <button
+          th:formaction="@{'/election/'+ ${electionId}+'/start'}"
+          type="submit"
+          class="btn btn-primary"
+        >
+          시작
+        </button>
+      </div>
+      <div
+        th:unless="${#strings.isEmpty(electionStartFormDto.id)}"
+        style="text-align: center"
+      >
+        <button
+          th:formaction="@{'/election/update/' + ${electionStartFormDto.id} }"
+          type="submit"
+          class="btn btn-primary"
+        >
+          종료
+        </button>
+      </div>
+    </form>
+  </div>
+</html>

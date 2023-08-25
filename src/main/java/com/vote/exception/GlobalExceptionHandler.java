@@ -20,4 +20,11 @@ public class GlobalExceptionHandler {
 
         return "error/error";
     }
+
+    @ExceptionHandler(ValidateElectionStartException.class)
+    public String electionEndException(ValidateElectionStartException e, Model model) {
+        model.addAttribute("errorMessage", e.getMessage());
+
+        return "error/error";
+    }
 }

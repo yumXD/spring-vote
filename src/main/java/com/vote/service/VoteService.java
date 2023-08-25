@@ -6,6 +6,7 @@ import com.vote.entity.Election;
 import com.vote.entity.Member;
 import com.vote.entity.Vote;
 import com.vote.exception.DuplicateVoteException;
+import com.vote.exception.ValidateElectionStartException;
 import com.vote.repository.ElectionRepository;
 import com.vote.repository.VoteRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -13,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -71,5 +73,35 @@ public class VoteService {
         return candidates.stream()
                 .filter(candidate -> candidate.getVoteCount().equals(maxVotes) && candidate.getVoteCount() > 0)
                 .collect(Collectors.toList());
+    }
+
+    // 투표가 진행중인지 검증하기
+    public void validateVotingInProgress(Long electionId) {
+        Election election = electionRepository.findById(electionId).orElseThrow(EntityNotFoundException::new);
+
+        if (election.getElectionStart() == null) {
+            throw new ValidateElectionStartException("선거 시작 정보가 설정되지 않았습니다.");
+        }
+
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime start = election.getElectionStart().getStartTime();
+        LocalDateTime end = election.getElectionStart().getEndDate();
+
+        if (!(now.isAfter(start) && now.isBefore(end))) {
+            throw new ValidateElectionStartException("투표는 현재 진행 중이 아닙니다.");
+        }
+    }
+
+    // 투표가 종료되었는지 검증하기
+    public void validateVotingClosure(Long electionId) {
+        Election election = electionRepository.findById(electionId).orElseThrow(EntityNotFoundException::new);
+
+        if (election.getElectionStart() == null) {
+            throw new ValidateElectionStartException("선거 시작 정보가 설정되지 않아 시작되지 않았습니다.");
+        }
+
+        if (!LocalDateTime.now().isAfter(election.getElectionStart().getEndDate())) {
+            throw new ValidateElectionStartException("투표 시간이 종료되지 않았습니다.");
+        }
     }
 }

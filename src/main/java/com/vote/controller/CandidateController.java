@@ -35,6 +35,7 @@ public class CandidateController {
         //후보자 추가 폼
 
         electionService.certification(electionId, principal.getName());
+        electionService.validateElectionStart(electionId);
 
         try {
             model.addAttribute("electionId", electionId);
@@ -68,6 +69,7 @@ public class CandidateController {
         //후보자 수정 폼 페이지
 
         electionService.certification(electionId, principal.getName());
+        electionService.validateElectionStart(electionId);
 
         try {
             CandidateFormDto candidateFormDto = candidateService.getCandidateDtl(candidateId);

@@ -6,6 +6,7 @@ import com.vote.entity.Candidate;
 import com.vote.entity.Election;
 import com.vote.entity.Member;
 import com.vote.exception.CertificationException;
+import com.vote.exception.ValidateElectionStartException;
 import com.vote.repository.ElectionRepository;
 import com.vote.repository.MemberRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -46,7 +47,15 @@ public class ElectionService {
     @Transactional(readOnly = true)
     public ElectionFormDto getElectionDtl(Long id) {
         Election election = electionRepository.findById(id).orElseThrow(EntityNotFoundException::new);
-        return ElectionFormDto.of(election);
+        ElectionFormDto electionFormDto = ElectionFormDto.of(election);
+
+        // 선거 시작 설정
+        if (election.getElectionStart() != null) {
+            electionFormDto.setEndTime(election.getElectionStart().getEndDate());
+            electionFormDto.setIsActive(election.getElectionStart().getIsActive());
+        }
+
+        return electionFormDto;
     }
 
     @Transactional(readOnly = true)
@@ -84,5 +93,14 @@ public class ElectionService {
             }
         }
 
+    }
+
+    // 선거가 시작되었는지 검증하기
+    public void validateElectionStart(Long electionId) {
+        Election election = electionRepository.findById(electionId).orElseThrow(EntityNotFoundException::new);
+
+        if (election.getElectionStart() != null) {
+            throw new ValidateElectionStartException("투표가 시작 혹은 종료되어 권한이 없습니다.");
+        }
     }
 }

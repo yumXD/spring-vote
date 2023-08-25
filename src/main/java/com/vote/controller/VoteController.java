@@ -29,6 +29,7 @@ public class VoteController {
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/election/{electionId}/vote")
     public String voteForm(@PathVariable("electionId") Long electionId, Model model) {
+        voteService.validateVotingInProgress(electionId);
         List<Candidate> candidates = electionService.getCandidates(electionId);
         model.addAttribute("voteFormDto", new VoteFormDto());
         model.addAttribute("candidates", candidates);
@@ -58,6 +59,7 @@ public class VoteController {
 
     @GetMapping("/election/{electionId}/status")
     public String voteStatus(@PathVariable("electionId") Long electionId, Model model) {
+        voteService.validateVotingClosure(electionId);
         try {
             Long totalVotes = voteService.getElectionTotalVotes(electionId);
             List<CandidatesVoteSearchDto> candidatesVoteCount = voteService.getCandidateVoteStatistics(electionId);

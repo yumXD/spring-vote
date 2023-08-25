@@ -33,6 +33,9 @@ public class Election extends BaseEntity {
     @OneToMany(mappedBy = "election", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Vote> votes = new ArrayList<>();
 
+    @OneToOne(mappedBy = "election", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private ElectionStart electionStart;
+
     public void addCandidate(Candidate candidate) {
         candidates.add(candidate);
         candidate.setElection(this);
