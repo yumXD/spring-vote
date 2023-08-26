@@ -54,4 +54,12 @@ public class ElectionStartController {
         }
         return "redirect:/election/" + electionId;
     }
+
+    @PostMapping("/election/{electionId}/end")
+    public String forceEndElection(@PathVariable("electionId") Long electionId) {
+
+        electionStartService.forceEndVoting(electionId);
+
+        return "redirect:/election/" + electionId;
+    }
 }
