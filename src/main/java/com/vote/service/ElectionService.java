@@ -103,4 +103,10 @@ public class ElectionService {
             throw new ValidateElectionStartException("투표가 시작 혹은 종료되어 권한이 없습니다.");
         }
     }
+
+    // 선거 삭제
+    public void deleteElection(Long electionId) {
+        Election election = electionRepository.findById(electionId).orElseThrow(EntityNotFoundException::new);
+        this.electionRepository.delete(election);
+    }
 }

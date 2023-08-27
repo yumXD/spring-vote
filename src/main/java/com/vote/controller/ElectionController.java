@@ -108,4 +108,17 @@ public class ElectionController {
         }
         return "redirect:/election/" + electionFormDto.getId();
     }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/election/delete/{electionId}")
+    public String deleteElection(Principal principal, @PathVariable("electionId") Long electionId, Model model) {
+        electionService.certification(electionId, principal.getName());
+        try {
+            electionService.deleteElection(electionId);
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "선거 삭제 중 에러가 발생하였습니다.");
+            return "error/error";
+        }
+        return "redirect:/";
+    }
 }
