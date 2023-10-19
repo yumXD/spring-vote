@@ -21,6 +21,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AdminMemberService {
     private final AdminMemberRepository adminMemberRepository;
+
     public Page<Member> getAdminMemberPage(int page, String kw) {
         List<Sort.Order> sorts = new ArrayList<>();
         sorts.add(Sort.Order.desc("regTime"));
@@ -28,14 +29,17 @@ public class AdminMemberService {
         return this.adminMemberRepository.findAllByKeyword(kw, pageable);
     }
 
+    public Member findById(Long id) {
+        return adminMemberRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("존재하지 않는 회원 정보입니다."));
+    }
+
     public MemberFormDto getMemberDtl(Long memberId) {
-        Member member = adminMemberRepository.findById(memberId).orElseThrow(EntityNotFoundException::new);
+        Member member = findById(memberId);
         return MemberFormDto.of(member);
     }
 
-    public Long updatePassword(MemberFormDto memberFormDto, Long memberId, PasswordEncoder passwordEncoder) {
-        Member member = adminMemberRepository.findById(memberId).orElseThrow(EntityNotFoundException::new);
+    public Member updatePassword(MemberFormDto memberFormDto, Member member, PasswordEncoder passwordEncoder) {
         member.updatePassword(memberFormDto.getPassword(), passwordEncoder);
-        return member.getId();
+        return member;
     }
 }

@@ -13,6 +13,19 @@
     </style>
   </th:block>
 
+  <!-- 사용자 스크립트 추가 -->
+  <th:block layout:fragment="script">
+    <script th:inline="javascript">
+      $(document).ready(function () {
+        /* Thymeleaf 템플릿 엔진 코드 */
+        var successMessage = /*[[${successMessage}]]*/ null;
+        if (successMessage) {
+          alert(successMessage);
+        }
+      });
+    </script>
+  </th:block>
+
   <div layout:fragment="content">
     <form role="form" method="post" action="/members/login">
       <div class="form-group">
@@ -22,6 +35,7 @@
           name="email"
           class="form-control"
           placeholder="이메일을 입력해주세요"
+          required
         />
       </div>
       <div class="form-group">
@@ -32,6 +46,7 @@
           id="password"
           class="form-control"
           placeholder="비밀번호 입력"
+          required
         />
       </div>
       <p th:if="${loginErrorMsg}" class="error" th:text="${loginErrorMsg}"></p>

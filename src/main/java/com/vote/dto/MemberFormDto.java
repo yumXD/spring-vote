@@ -36,7 +36,7 @@ public class MemberFormDto {
     public static MemberFormDto of(Member member) {
         MemberFormDto memberFormDto = new MemberFormDto();
         memberFormDto.setId(member.getId());
-        memberFormDto.setName(member.getName());
+        memberFormDto.setName(member.getActualUsername());
         memberFormDto.setEmail(member.getEmail());
         memberFormDto.setAddress(member.getAddress());
         memberFormDto.setBirth(member.getBirth());

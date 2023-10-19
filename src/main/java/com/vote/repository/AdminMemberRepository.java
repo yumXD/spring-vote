@@ -14,7 +14,7 @@ public interface AdminMemberRepository extends JpaRepository<Member, Long> {
             + "distinct m "
             + "from Member m "
             + "where "
-            + "   m.name like %:kw% "
+            + "   m.username like %:kw% "
             + "   or m.email like %:kw% ")
     Page<Member> findAllByKeyword(@Param("kw") String kw, Pageable pageable);
 }

@@ -16,12 +16,13 @@
   <!-- 사용자 스크립트 추가 -->
   <th:block layout:fragment="script">
     <script th:inline="javascript">
-      $(document).ready(function(){
-          var errorMessage = [[${errorMessage}]];
-          if(errorMessage != null){
-              alert(errorMessage);
-          }
-          let today = new Date().toISOString().split('T')[0];
+      $(document).ready(function () {
+        /* Thymeleaf 템플릿 엔진 코드 */
+        var errorMessage = /*[[${errorMessage}]]*/ null;
+        if (errorMessage) {
+          alert(errorMessage);
+        }
+        let today = new Date().toISOString().split("T")[0];
         $("#birth").attr("max", today);
       });
     </script>
@@ -37,6 +38,7 @@
           class="form-control"
           placeholder="이름을 입력해주세요"
           th:readonly="${memberId != null ? 'readonly' : null}"
+          required
         />
         <p
           th:if="${#fields.hasErrors('name')}"
@@ -54,6 +56,7 @@
           class="form-control"
           placeholder="이메일을 입력해주세요"
           th:readonly="${memberId != null ? 'readonly' : null}"
+          required
         />
         <p
           th:if="${#fields.hasErrors('email')}"
@@ -70,6 +73,7 @@
           th:field="*{password}"
           class="form-control"
           placeholder="비밀번호 입력"
+          required
         />
         <p
           th:if="${#fields.hasErrors('password')}"
@@ -87,6 +91,7 @@
           class="form-control"
           placeholder="주소를 입력해주세요"
           th:readonly="${memberId != null ? 'readonly' : null}"
+          required
         />
         <p
           th:if="${#fields.hasErrors('address')}"
@@ -106,6 +111,7 @@
               class="form-control"
               placeholder="날짜를 선택해주세요"
               th:readonly="${memberId != null ? 'readonly' : null}"
+              required
             />
             <p
               th:if="${#fields.hasErrors('birth')}"

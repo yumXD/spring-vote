@@ -7,6 +7,15 @@
   <!-- 사용자 스크립트 추가 -->
   <th:block layout:fragment="script">
     <script th:inline="javascript">
+      /* Thymeleaf 템플릿 엔진 코드 */
+      var successMessage = /*[[${successMessage}]]*/ null;
+      if (successMessage) {
+        alert(successMessage);
+      }
+      var errorMessage = /*[[${errorMessage}]]*/ null;
+      if (errorMessage) {
+        alert(errorMessage);
+      }
       const page_elements = document.getElementsByClassName("page-link");
       Array.from(page_elements).forEach(function (element) {
         element.addEventListener("click", function () {
@@ -48,7 +57,6 @@
       <thead class="table-dark">
         <tr>
           <th>번호</th>
-          <th>회원아이디</th>
           <th>회원이름</th>
           <th>회원이메일</th>
           <th>회원권한</th>
@@ -60,11 +68,10 @@
           <td
             th:text="${members.getTotalElements - (members.number * members.size) - loop.index}"
           ></td>
-          <td th:text="${member.id}"></td>
           <td>
             <a
               th:href="'/admin/member/'+${member.id}"
-              th:text="${member.name}"
+              th:text="${member.getActualUsername}"
             ></a>
           </td>
           <td th:text="${member.email}"></td>
