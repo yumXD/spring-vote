@@ -9,6 +9,16 @@
   <th:block layout:fragment="script">
     <script th:inline="javascript">
       $(document).ready(function () {
+        /* Thymeleaf 템플릿 엔진 코드 */
+        var successMessage = /*[[${successMessage}]]*/ null;
+        if (successMessage) {
+          alert(successMessage);
+        }
+        /* Thymeleaf 템플릿 엔진 코드 */
+        var errorMessage = /*[[${errorMessage}]]*/ null;
+        if (errorMessage) {
+          alert(errorMessage);
+        }
         $("#searchBtn").on("click", function (e) {
           e.preventDefault();
           page(0);
@@ -76,107 +86,124 @@
   </th:block>
 
   <div layout:fragment="content">
-    <form
-      th:action="@{'/elections/' + ${elections.number}}"
-      role="form"
-      method="get"
-      th:object="${elections}"
-    >
-      <table class="table">
-        <thead>
-          <tr>
-            <td>선거아이디</td>
-            <td>선거 제목</td>
-            <td>등록자</td>
-            <td>등록일</td>
-          </tr>
-        </thead>
-        <tbody>
-          <tr th:each="election, status: ${elections.getContent()}">
-            <td th:text="${election.id}"></td>
-            <td>
-              <a
-                th:href="'/election/'+${election.id}"
-                th:text="${election.title}"
-              ></a>
-            </td>
-            <td th:text="${election.createdBy}"></td>
-            <td
-              class="formattedEndTime"
-              th:attr="data-end-time=${election.regTime}"
-            ></td>
-          </tr>
-        </tbody>
-      </table>
-
-      <div
-        th:with="start=${(elections.number/maxPage)*maxPage + 1}, end=(${(elections.totalPages == 0) ? 1 : (start + (maxPage - 1) < elections.totalPages ? start + (maxPage - 1) : elections.totalPages)})"
-      >
-        <ul class="pagination justify-content-center">
-          <li class="page-item" th:classappend="${elections.first}?'disabled'">
-            <a
-              th:onclick="'javascript:page(' + ${elections.number - 1} + ')'"
-              aria-label="Previous"
-              class="page-link"
-            >
-              <span aria-hidden="true">Previous</span>
-            </a>
-          </li>
-
-          <li
-            class="page-item"
-            th:each="page: ${#numbers.sequence(start, end)}"
-            th:classappend="${elections.number eq page-1}?'active':''"
-          >
-            <a
-              th:onclick="'javascript:page(' + ${page - 1} + ')'"
-              th:inline="text"
-              class="page-link"
-              >[[${page}]]</a
-            >
-          </li>
-
-          <li class="page-item" th:classappend="${elections.last}?'disabled'">
-            <a
-              th:onclick="'javascript:page(' + ${elections.number + 1} + ')'"
-              aria-label="Next"
-              class="page-link"
-            >
-              <span aria-hidden="true">Next</span>
-            </a>
-          </li>
-        </ul>
+    <div class="container mt-5">
+      <div class="row">
+        <div class="col-md-3">
+          <h2 class="mb-4">선거 목록</h2>
+        </div>
+        <div class="col-md-9">
+          <a href="/election/new" class="btn btn-primary">선거 등록</a>
+        </div>
       </div>
-
-      <div
-        class="form-inline justify-content-center"
-        th:object="${candidateSearchDto}"
+      <form
+        th:action="@{'/elections/' + ${elections.number}}"
+        role="form"
+        method="get"
+        th:object="${elections}"
       >
-        <select
-          th:field="*{searchDateType}"
-          class="form-control"
-          style="width: auto"
+        <table class="table">
+          <thead>
+            <tr>
+              <td>선거아이디</td>
+              <td>선거 제목</td>
+              <td>등록자</td>
+              <td>등록일</td>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="election, status: ${elections.getContent()}">
+              <td th:text="${election.id}"></td>
+              <td>
+                <a
+                  th:href="'/election/'+${election.id}"
+                  th:text="${election.title}"
+                ></a>
+              </td>
+              <td th:text="${election.createdBy}"></td>
+              <td
+                class="formattedEndTime"
+                th:attr="data-end-time=${election.regTime}"
+              ></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div
+          th:with="start=${(elections.number/maxPage)*maxPage + 1}, end=(${(elections.totalPages == 0) ? 1 : (start + (maxPage - 1) < elections.totalPages ? start + (maxPage - 1) : elections.totalPages)})"
         >
-          <option value="all">전체기간</option>
-          <option value="1d">1일</option>
-          <option value="1w">1주</option>
-          <option value="1m">1개월</option>
-          <option value="6m">6개월</option>
-        </select>
-        <select th:field="*{searchBy}" class="form-control" style="width: auto">
-          <option value="title">제목</option>
-          <option value="createdBy">등록자</option>
-        </select>
-        <input
-          th:field="*{searchQuery}"
-          type="text"
-          class="form-control"
-          placeholder="검색어를 입력해주세요"
-        />
-        <button id="searchBtn" type="submit" class="btn btn-primary">
-          검색
-        </button>
-      </div>
-    </form>
+          <ul class="pagination justify-content-center">
+            <li
+              class="page-item"
+              th:classappend="${elections.first}?'disabled'"
+            >
+              <a
+                th:onclick="'javascript:page(' + ${elections.number - 1} + ')'"
+                aria-label="Previous"
+                class="page-link"
+              >
+                <span aria-hidden="true">Previous</span>
+              </a>
+            </li>
+
+            <li
+              class="page-item"
+              th:each="page: ${#numbers.sequence(start, end)}"
+              th:classappend="${elections.number eq page-1}?'active':''"
+            >
+              <a
+                th:onclick="'javascript:page(' + ${page - 1} + ')'"
+                th:inline="text"
+                class="page-link"
+                >[[${page}]]</a
+              >
+            </li>
+
+            <li class="page-item" th:classappend="${elections.last}?'disabled'">
+              <a
+                th:onclick="'javascript:page(' + ${elections.number + 1} + ')'"
+                aria-label="Next"
+                class="page-link"
+              >
+                <span aria-hidden="true">Next</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <div
+          class="form-inline justify-content-center"
+          th:object="${candidateSearchDto}"
+        >
+          <select
+            th:field="*{searchDateType}"
+            class="form-control"
+            style="width: auto"
+          >
+            <option value="all">전체기간</option>
+            <option value="1d">1일</option>
+            <option value="1w">1주</option>
+            <option value="1m">1개월</option>
+            <option value="6m">6개월</option>
+          </select>
+          <select
+            th:field="*{searchBy}"
+            class="form-control"
+            style="width: auto"
+          >
+            <option value="title">제목</option>
+            <option value="createdBy">등록자</option>
+          </select>
+          <input
+            th:field="*{searchQuery}"
+            type="text"
+            class="form-control"
+            placeholder="검색어를 입력해주세요"
+          />
+          <button id="searchBtn" type="submit" class="btn btn-primary">
+            검색
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
 </html>

@@ -44,9 +44,13 @@ public class ElectionService {
         return election;
     }
 
+    public Election findById(Long id) {
+        return electionRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("존재하지 않는 선거 정보입니다."));
+    }
+
     @Transactional(readOnly = true)
     public ElectionFormDto getElectionDtl(Long id) {
-        Election election = electionRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        Election election = findById(id);
         ElectionFormDto electionFormDto = ElectionFormDto.of(election);
 
         // 선거 시작 설정
@@ -64,24 +68,24 @@ public class ElectionService {
     }
 
     public List<Candidate> getCandidates(Long electionId) {
-        Election election = electionRepository.findById(electionId).orElseThrow(EntityNotFoundException::new);
+        Election election = findById(electionId);
         return election.getCandidates();
     }
 
     public String getEmail(Long electionId) {
-        Election election = electionRepository.findById(electionId).orElseThrow(EntityNotFoundException::new);
+        Election election = findById(electionId);
         return election.getMember().getEmail();
     }
 
-    public Long updateElection(ElectionFormDto electionFormDto) {
-        //선거 수정
-        Election election = electionRepository.findById(electionFormDto.getId()).orElseThrow(EntityNotFoundException::new);
+    public Election updateElection(ElectionFormDto electionFormDto) {
+        Election election = findById(electionFormDto.getId());
         election.updateElection(electionFormDto);
-        return election.getId();
+        return election;
     }
 
-    public Election getElection(Long electionId) {
-        return electionRepository.findById(electionId).orElseThrow(EntityNotFoundException::new);
+    public void deleteElection(Long electionId) {
+        Election election = findById(electionId);
+        this.electionRepository.delete(election);
     }
 
     public void certification(Long electionId, String email) {
@@ -102,11 +106,5 @@ public class ElectionService {
         if (election.getElectionStart() != null) {
             throw new ValidateElectionStartException("투표가 시작 혹은 종료되어 권한이 없습니다.");
         }
-    }
-
-    // 선거 삭제
-    public void deleteElection(Long electionId) {
-        Election election = electionRepository.findById(electionId).orElseThrow(EntityNotFoundException::new);
-        this.electionRepository.delete(election);
     }
 }

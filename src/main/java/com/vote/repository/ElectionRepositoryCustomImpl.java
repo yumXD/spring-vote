@@ -7,6 +7,7 @@ import com.vote.dto.CandidateSearchDto;
 import com.vote.entity.Election;
 import com.vote.entity.QElection;
 import jakarta.persistence.EntityManager;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -15,6 +16,7 @@ import org.thymeleaf.util.StringUtils;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Slf4j
 public class ElectionRepositoryCustomImpl implements ElectionRepositoryCustom {
 
     private JPAQueryFactory queryFactory;
@@ -25,6 +27,8 @@ public class ElectionRepositoryCustomImpl implements ElectionRepositoryCustom {
 
     private BooleanExpression regDtsAfter(String searchDateType) {
         LocalDateTime dateTime = LocalDateTime.now();
+        log.info("(B) dateTime: {}", dateTime);
+        log.info("searchDateType: {}", searchDateType);
 
         if (StringUtils.equals("all", searchDateType) || searchDateType == null) {
             return null;
@@ -37,11 +41,12 @@ public class ElectionRepositoryCustomImpl implements ElectionRepositoryCustom {
         } else if (StringUtils.equals("6m", searchDateType)) {
             dateTime = dateTime.minusMonths(6);
         }
-
+        log.info("(A) dateTime: {}", dateTime);
         return QElection.election.regTime.after(dateTime);
     }
 
     private BooleanExpression searchByLike(String searchBy, String searchQuery) {
+        log.info("searchBy: {}, searchQuery: {}", searchBy, searchQuery);
         if (StringUtils.equals("title", searchBy)) {
             return QElection.election.title.like("%" + searchQuery + "%");
         } else if (StringUtils.equals("createdBy", searchBy)) {
@@ -66,8 +71,6 @@ public class ElectionRepositoryCustomImpl implements ElectionRepositoryCustom {
                 .where(regDtsAfter(candidateSearchDto.getSearchDateType()),
                         searchByLike(candidateSearchDto.getSearchBy(), candidateSearchDto.getSearchQuery()))
                 .fetchOne();
-
-
         return new PageImpl<>(content, pageable, total);
     }
 }
