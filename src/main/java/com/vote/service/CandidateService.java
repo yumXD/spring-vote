@@ -1,29 +1,27 @@
 package com.vote.service;
 
 import com.vote.dto.CandidateFormDto;
-import com.vote.dto.CandidateSearchDto;
 import com.vote.entity.Candidate;
 import com.vote.entity.Election;
 import com.vote.repository.CandidateRepository;
-import com.vote.repository.ElectionRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class CandidateService {
     private final CandidateRepository candidateRepository;
-    private final ElectionRepository electionRepository;
+    private final ElectionService electionService;
 
-    public Long saveCandidate(Long electionId, CandidateFormDto candidateFormDto) {
+    public Candidate saveCandidate(Long electionId, CandidateFormDto candidateFormDto) {
 
         //선거 찾기
-        Election election = electionRepository.findById(electionId).orElseThrow(EntityNotFoundException::new);
+        Election election = electionService.findById(electionId);
 
         //후보자 등록
         Candidate candidate = candidateFormDto.toEntity();
@@ -32,30 +30,32 @@ public class CandidateService {
 
         candidateRepository.save(candidate);
 
-        return candidate.getId();
+        return candidate;
     }
 
     @Transactional(readOnly = true)
-    public CandidateFormDto getCandidateDtl(Long id) {
-        Candidate candidate = candidateRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+    public CandidateFormDto getCandidateDtl(Long electionId, Long candidateId) {
+        List<Candidate> candidates = electionService.getCandidates(electionId);
+        Candidate candidate = candidates.stream()
+                .filter(c -> c.getId().equals(candidateId))
+                .findFirst()
+                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 후보자입니다."));
         return CandidateFormDto.of(candidate);
     }
 
-    public Candidate updateCandidate(CandidateFormDto candidateFormDto) {
+    public Candidate updateCandidate(CandidateFormDto candidateFormDto, Long electionId, Long candidateId) {
+        List<Candidate> candidates = electionService.getCandidates(electionId);
+        Candidate candidate = candidates.stream()
+                .filter(c -> c.getId().equals(candidateId))
+                .findFirst()
+                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 후보자입니다."));
 
-        //후보자 수정
-        Candidate candidate = candidateRepository.findById(candidateFormDto.getId()).orElseThrow(EntityNotFoundException::new);
         candidate.updateCandidate(candidateFormDto);
 
         return candidate;
     }
 
-    @Transactional(readOnly = true)
-    public Page<Candidate> getAdminCandidatePage(CandidateSearchDto candidateSearchDto, Pageable pageable) {
-        return candidateRepository.getAdminCandidatePage(candidateSearchDto, pageable);
-    }
-
-    public Candidate getCandidate(Long candidateId) {
-        return candidateRepository.findById(candidateId).orElseThrow(EntityNotFoundException::new);
+    public Candidate findById(Long id) {
+        return candidateRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("존재하지 않는 후보자입니다."));
     }
 }

@@ -31,7 +31,7 @@ public class VoteService {
     public Vote createVote(String username, Long electionId, Long candidateId) {
         Member member = memberService.getMember(username);
         Election election = electionService.findById(electionId);
-        Candidate candidate = candidateService.getCandidate(candidateId);
+        Candidate candidate = candidateService.findById(candidateId);
 
         Vote vote = Vote.createVote(member, election, candidate);
 
