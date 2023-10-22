@@ -18,14 +18,18 @@
       if (errorMessage) {
         alert(errorMessage);
       }
-      const delete_elements = document.getElementsByClassName("delete");
-      Array.from(delete_elements).forEach(function (element) {
-        element.addEventListener("click", function () {
-          if (confirm("정말로 삭제하시겠습니까?")) {
-            location.href = this.dataset.uri;
-          }
-        });
-      });
+
+      function confirmDelete() {
+        if (confirm("선거를 삭제하시겠습니까?")) {
+          document.getElementById("deleteForm").submit();
+        }
+      }
+
+      function confirmStop() {
+        if (confirm("투표를 강제 종료하시겠습니까?")) {
+          document.getElementById("stopForm").submit();
+        }
+      }
 
       if (document.querySelector(".alert-info")) {
         var endTime = new Date(/*[[${electionFormDto.endTime}]]*/).getTime();
@@ -134,14 +138,16 @@
               선거 수정
             </a>
             <form
+              id="deleteForm"
               th:action="@{/election/delete/{id}(id=${electionFormDto.id})}"
               method="post"
             >
               <button
-                type="submit"
+                type="button"
                 class="delete btn btn-danger"
                 sec:authorize="isAuthenticated"
                 th:if="${email != null and email == #authentication.getPrincipal().getUsername()}"
+                onclick="confirmDelete()"
               >
                 선거 삭제
               </button>
@@ -228,6 +234,7 @@
             </a>
 
             <form
+              id="stopForm"
               th:action="@{'/election/' + ${electionFormDto.id} + '/end'}"
               method="post"
               style="display: inline-block"
@@ -235,8 +242,9 @@
               <button
                 sec:authorize="isAuthenticated()"
                 th:if="${email != null and email == #authentication.getPrincipal().getUsername()}"
-                type="submit"
+                type="button"
                 class="btn btn-danger"
+                onclick="confirmStop()"
               >
                 투표 종료
               </button>

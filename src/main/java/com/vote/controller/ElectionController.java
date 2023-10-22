@@ -101,7 +101,7 @@ public class ElectionController {
                                  RedirectAttributes redirectAttributes) {
         // 선거 수정 폼
         electionService.isAccessAllowed(electionId, principal.getName());
-        electionService.isElectionInProgress(electionId, electionId);
+        electionService.isElectionInProgress(electionId);
 
         try {
             ElectionFormDto electionFormDto = electionService.getElectionDtl(electionId);

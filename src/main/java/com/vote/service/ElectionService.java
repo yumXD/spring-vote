@@ -96,10 +96,10 @@ public class ElectionService {
     }
 
     // 선거가 시작되었는지 검증하기
-    public void isElectionInProgress(Long electionId, Long id) {
+    public void isElectionInProgress(Long electionId) {
         Election election = findById(electionId);
         if (election.getElectionTimer() != null) {
-            throw new ElectionInProgressException("투표가 시작 혹은 종료되어 권한이 없습니다.", id);
+            throw new ElectionInProgressException("투표가 시작 혹은 종료되어 권한이 없습니다.", electionId);
         }
     }
 }

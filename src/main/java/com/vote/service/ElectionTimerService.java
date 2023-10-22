@@ -4,9 +4,7 @@ import com.vote.dto.ElectionTimerFormDto;
 import com.vote.entity.Election;
 import com.vote.entity.ElectionTimer;
 import com.vote.exception.ElectionInProgressException;
-import com.vote.repository.ElectionRepository;
 import com.vote.repository.ElectionTimerRepository;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,19 +15,12 @@ import java.time.LocalDateTime;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class ElectionStartService {
-    private final ElectionRepository electionRepository;
+public class ElectionTimerService {
+    private final ElectionService electionService;
     private final ElectionTimerRepository electionTimerRepository;
 
-    public Election validateElection(Long electionId) {
-        Election election = electionRepository.findById(electionId).orElseThrow(EntityNotFoundException::new);
-        return election;
-    }
-
-
     public ElectionTimer startElection(ElectionTimerFormDto electionTimerFormDto, Long electionId) {
-        //선거 찾기
-        Election election = electionRepository.findById(electionId).orElseThrow(EntityNotFoundException::new);
+        Election election = electionService.findById(electionId);
 
         ElectionTimer electionTimer = ElectionTimer.createElectionTimer(electionTimerFormDto);
         electionTimer.addElection(election);
@@ -38,9 +29,8 @@ public class ElectionStartService {
         return electionTimer;
     }
 
-    // 투표 강제 종료하기
     public void forceEndVoting(Long electionId) {
-        Election election = electionRepository.findById(electionId).orElseThrow(EntityNotFoundException::new);
+        Election election = electionService.findById(electionId);
 
         ElectionTimer electionTimer = election.getElectionTimer();
 

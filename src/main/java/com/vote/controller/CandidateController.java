@@ -36,7 +36,7 @@ public class CandidateController {
                                RedirectAttributes redirectAttributes) {
 
         electionService.isAccessAllowed(electionId, principal.getName());
-        electionService.isElectionInProgress(electionId, electionId);
+        electionService.isElectionInProgress(electionId);
 
         try {
             Election election = electionService.findById(electionId);
@@ -105,7 +105,7 @@ public class CandidateController {
                                   RedirectAttributes redirectAttributes) {
 
         electionService.isAccessAllowed(electionId, principal.getName());
-        electionService.isElectionInProgress(electionId, electionId);
+        electionService.isElectionInProgress(electionId);
 
         try {
             CandidateFormDto candidateFormDto = candidateService.getCandidateDtl(electionId, candidateId);
