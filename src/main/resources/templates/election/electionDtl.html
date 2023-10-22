@@ -13,6 +13,11 @@
       if (successMessage) {
         alert(successMessage);
       }
+      /* Thymeleaf 템플릿 엔진 코드 */
+      var errorMessage = /*[[${errorMessage}]]*/ null;
+      if (errorMessage) {
+        alert(errorMessage);
+      }
       const delete_elements = document.getElementsByClassName("delete");
       Array.from(delete_elements).forEach(function (element) {
         element.addEventListener("click", function () {

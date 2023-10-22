@@ -1,6 +1,6 @@
 package com.vote.entity;
 
-import com.vote.dto.ElectionStartFormDto;
+import com.vote.dto.ElectionTimerFormDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -9,10 +9,10 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "election_start")
+@Table(name = "election_timer")
 @Getter
 @Setter
-public class ElectionStart {
+public class ElectionTimer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -34,15 +34,15 @@ public class ElectionStart {
     }
 
     public void addElection(Election election) {
-        election.setElectionStart(this);
+        election.setElectionTimer(this);
         this.setElection(election);
     }
 
-    public static ElectionStart createElectionStart(ElectionStartFormDto electionStartFormDto) {
-        ElectionStart electionStart = new ElectionStart();
-        electionStart.setStartTime(LocalDateTime.now());
-        electionStart.setIsActive(true);
-        electionStart.setDuration(Duration.ofSeconds(electionStartFormDto.getDurationInSeconds()));
-        return electionStart;
+    public static ElectionTimer createElectionTimer(ElectionTimerFormDto electionTimerFormDto) {
+        ElectionTimer electionTimer = new ElectionTimer();
+        electionTimer.setStartTime(LocalDateTime.now());
+        electionTimer.setIsActive(true);
+        electionTimer.setDuration(Duration.ofSeconds(electionTimerFormDto.getDurationInSeconds()));
+        return electionTimer;
     }
 }

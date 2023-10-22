@@ -5,8 +5,8 @@ import com.vote.dto.ElectionFormDto;
 import com.vote.entity.Candidate;
 import com.vote.entity.Election;
 import com.vote.entity.Member;
-import com.vote.exception.CertificationException;
-import com.vote.exception.ValidateElectionStartException;
+import com.vote.exception.AccessAllowedException;
+import com.vote.exception.ElectionInProgressException;
 import com.vote.repository.ElectionRepository;
 import com.vote.repository.MemberRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -54,9 +54,9 @@ public class ElectionService {
         ElectionFormDto electionFormDto = ElectionFormDto.of(election);
 
         // 선거 시작 설정
-        if (election.getElectionStart() != null) {
-            electionFormDto.setEndTime(election.getElectionStart().getEndDate());
-            electionFormDto.setIsActive(election.getElectionStart().getIsActive());
+        if (election.getElectionTimer() != null) {
+            electionFormDto.setEndTime(election.getElectionTimer().getEndDate());
+            electionFormDto.setIsActive(election.getElectionTimer().getIsActive());
         }
 
         return electionFormDto;
@@ -88,23 +88,18 @@ public class ElectionService {
         this.electionRepository.delete(election);
     }
 
-    public void certification(Long electionId, String email) {
-        Election election = electionRepository.findById(electionId).orElse(null);
-
-        if (election != null) {
-            if (!election.getMember().getEmail().equals(email)) {
-                throw new CertificationException("인증이 없어 권한이 없습니다.");
-            }
+    public void isAccessAllowed(Long electionId, String email) {
+        Election election = findById(electionId);
+        if (!election.getMember().getEmail().equals(email)) {
+            throw new AccessAllowedException("접근 권한이 없습니다.");
         }
-
     }
 
     // 선거가 시작되었는지 검증하기
-    public void validateElectionStart(Long electionId) {
-        Election election = electionRepository.findById(electionId).orElseThrow(EntityNotFoundException::new);
-
-        if (election.getElectionStart() != null) {
-            throw new ValidateElectionStartException("투표가 시작 혹은 종료되어 권한이 없습니다.");
+    public void isElectionInProgress(Long electionId, Long id) {
+        Election election = findById(electionId);
+        if (election.getElectionTimer() != null) {
+            throw new ElectionInProgressException("투표가 시작 혹은 종료되어 권한이 없습니다.", id);
         }
     }
 }

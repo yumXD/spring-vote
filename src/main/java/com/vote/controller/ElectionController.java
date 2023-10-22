@@ -100,8 +100,8 @@ public class ElectionController {
                                  Model model,
                                  RedirectAttributes redirectAttributes) {
         // 선거 수정 폼
-        electionService.certification(electionId, principal.getName());
-        electionService.validateElectionStart(electionId);
+        electionService.isAccessAllowed(electionId, principal.getName());
+        electionService.isElectionInProgress(electionId, electionId);
 
         try {
             ElectionFormDto electionFormDto = electionService.getElectionDtl(electionId);
@@ -142,7 +142,7 @@ public class ElectionController {
     public String deleteElection(Principal principal,
                                  @PathVariable("electionId") Long electionId,
                                  RedirectAttributes redirectAttributes) {
-        electionService.certification(electionId, principal.getName());
+        electionService.isAccessAllowed(electionId, principal.getName());
         try {
             electionService.deleteElection(electionId);
             log.info("선거 삭제 성공");

@@ -35,8 +35,8 @@ public class CandidateController {
                                Model model,
                                RedirectAttributes redirectAttributes) {
 
-        electionService.certification(electionId, principal.getName());
-        electionService.validateElectionStart(electionId);
+        electionService.isAccessAllowed(electionId, principal.getName());
+        electionService.isElectionInProgress(electionId, electionId);
 
         try {
             Election election = electionService.findById(electionId);
@@ -104,8 +104,8 @@ public class CandidateController {
                                   Model model,
                                   RedirectAttributes redirectAttributes) {
 
-        electionService.certification(electionId, principal.getName());
-        electionService.validateElectionStart(electionId);
+        electionService.isAccessAllowed(electionId, principal.getName());
+        electionService.isElectionInProgress(electionId, electionId);
 
         try {
             CandidateFormDto candidateFormDto = candidateService.getCandidateDtl(electionId, candidateId);

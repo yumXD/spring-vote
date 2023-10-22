@@ -6,7 +6,7 @@ import com.vote.entity.Election;
 import com.vote.entity.Member;
 import com.vote.entity.Vote;
 import com.vote.exception.DuplicateVoteException;
-import com.vote.exception.ValidateElectionStartException;
+import com.vote.exception.ElectionInProgressException;
 import com.vote.repository.ElectionRepository;
 import com.vote.repository.VoteRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -79,16 +79,16 @@ public class VoteService {
     public void validateVotingInProgress(Long electionId) {
         Election election = electionRepository.findById(electionId).orElseThrow(EntityNotFoundException::new);
 
-        if (election.getElectionStart() == null) {
-            throw new ValidateElectionStartException("선거 시작 정보가 설정되지 않았습니다.");
+        if (election.getElectionTimer() == null) {
+            throw new ElectionInProgressException("선거 시작 정보가 설정되지 않았습니다.", electionId);
         }
 
         LocalDateTime now = LocalDateTime.now();
-        LocalDateTime start = election.getElectionStart().getStartTime();
-        LocalDateTime end = election.getElectionStart().getEndDate();
+        LocalDateTime start = election.getElectionTimer().getStartTime();
+        LocalDateTime end = election.getElectionTimer().getEndDate();
 
         if (!(now.isAfter(start) && now.isBefore(end))) {
-            throw new ValidateElectionStartException("투표는 현재 진행 중이 아닙니다.");
+            throw new ElectionInProgressException("투표는 현재 진행 중이 아닙니다.", electionId);
         }
     }
 
@@ -96,12 +96,12 @@ public class VoteService {
     public void validateVotingClosure(Long electionId) {
         Election election = electionRepository.findById(electionId).orElseThrow(EntityNotFoundException::new);
 
-        if (election.getElectionStart() == null) {
-            throw new ValidateElectionStartException("선거 시작 정보가 설정되지 않아 시작되지 않았습니다.");
+        if (election.getElectionTimer() == null) {
+            throw new ElectionInProgressException("선거 시작 정보가 설정되지 않아 시작되지 않았습니다.", electionId);
         }
 
-        if (!LocalDateTime.now().isAfter(election.getElectionStart().getEndDate())) {
-            throw new ValidateElectionStartException("투표 시간이 종료되지 않았습니다.");
+        if (!LocalDateTime.now().isAfter(election.getElectionTimer().getEndDate())) {
+            throw new ElectionInProgressException("투표 시간이 종료되지 않았습니다.", electionId);
         }
     }
 }

@@ -1,6 +1,6 @@
 package com.vote.controller;
 
-import com.vote.dto.ElectionStartFormDto;
+import com.vote.dto.ElectionTimerFormDto;
 import com.vote.service.ElectionService;
 import com.vote.service.ElectionStartService;
 import jakarta.persistence.EntityNotFoundException;
@@ -18,36 +18,36 @@ import java.security.Principal;
 
 @Controller
 @RequiredArgsConstructor
-public class ElectionStartController {
+public class ElectionTimerController {
     private final ElectionStartService electionStartService;
     private final ElectionService electionService;
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/election/{electionId}/start")
-    public String electionStart(@PathVariable("electionId") Long electionId, Principal principal, Model model) {
+    public String startElection(@PathVariable("electionId") Long electionId, Principal principal, Model model) {
 
-        electionService.certification(electionId, principal.getName());
-        electionService.validateElectionStart(electionId);
+        electionService.isAccessAllowed(electionId, principal.getName());
+        electionService.isElectionInProgress(electionId, electionId);
 
         try {
             electionStartService.validateElection(electionId);
-            model.addAttribute("electionStartFormDto", new ElectionStartFormDto());
+            model.addAttribute("electionTimerFormDto", new ElectionTimerFormDto());
             model.addAttribute("electionId", electionId);
         } catch (EntityNotFoundException e) {
             model.addAttribute("errorMessage", "존재하지 않는 투표시작 페이지 입니다.");
             return "error/error";
         }
-        return "election/electionStartForm";
+        return "timer/electionTimerForm";
     }
 
     @PostMapping("/election/{electionId}/start")
-    public String electionStart(@Valid ElectionStartFormDto electionStartFormDto, BindingResult bindingResult, @PathVariable("electionId") Long electionId, Model model) {
+    public String startElection(@Valid ElectionTimerFormDto electionTimerFormDto, BindingResult bindingResult, @PathVariable("electionId") Long electionId, Model model) {
         if (bindingResult.hasErrors()) {
-            return "election/electionStartForm";
+            return "timer/electionTimerForm";
         }
 
         try {
-            electionStartService.startElection(electionStartFormDto, electionId);
+            electionStartService.startElection(electionTimerFormDto, electionId);
         } catch (Exception e) {
             model.addAttribute("errorMessage", "투표시작 중 에러가 발생하였습니다.");
             return "error/error";

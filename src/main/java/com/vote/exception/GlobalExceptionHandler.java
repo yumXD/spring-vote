@@ -3,6 +3,7 @@ package com.vote.exception;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -14,17 +15,16 @@ public class GlobalExceptionHandler {
         return "error/error";
     }
 
-    @ExceptionHandler(CertificationException.class)
-    public String certificationException(CertificationException e, Model model) {
-        model.addAttribute("errorMessage", e.getMessage());
-
-        return "error/error";
+    @ExceptionHandler(AccessAllowedException.class)
+    public String AccessAllowedException(AccessAllowedException ex, RedirectAttributes redirectAttributes) {
+        redirectAttributes.addFlashAttribute("errorMessage", ex.getMessage());
+        return "redirect:/elections";
     }
 
-    @ExceptionHandler(ValidateElectionStartException.class)
-    public String electionEndException(ValidateElectionStartException e, Model model) {
-        model.addAttribute("errorMessage", e.getMessage());
+    @ExceptionHandler(ElectionInProgressException.class)
+    public String ElectionInProgressException(ElectionInProgressException ex, RedirectAttributes redirectAttributes) {
+        redirectAttributes.addFlashAttribute("errorMessage", ex.getMessage());
 
-        return "error/error";
+        return "redirect:/election/" + ex.getId();
     }
 }

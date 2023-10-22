@@ -8,7 +8,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ElectionStartFormDto {
+public class ElectionTimerFormDto {
     private Long Id;
 
     @NotNull(message = "제한시간은 필수 입력값입니다.")
