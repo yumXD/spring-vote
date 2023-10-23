@@ -8,7 +8,6 @@ import com.vote.entity.Member;
 import com.vote.exception.AccessAllowedException;
 import com.vote.exception.ElectionInProgressException;
 import com.vote.repository.ElectionRepository;
-import com.vote.repository.MemberRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -24,15 +23,11 @@ import java.util.List;
 public class ElectionService {
     private final ElectionRepository electionRepository;
 
-    private final MemberRepository memberRepository;
+    private final MemberService memberService;
 
     public Election saveElection(ElectionFormDto electionFormDto, String email) {
         //회원 찾기
-        Member member = memberRepository.findByEmail(email);
-
-        if (member == null) {
-            throw new IllegalStateException("존재하지 않는 회원입니다.");
-        }
+        Member member = memberService.findByEmail(email).orElseThrow(() -> new IllegalStateException("존재하지 않는 회원입니다."));
 
         //선거 등록
         Election election = electionFormDto.toEntity();

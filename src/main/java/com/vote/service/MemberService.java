@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -18,13 +20,13 @@ public class MemberService {
     }
 
     private void validateDuplicateEmail(Member member) {
-        Member findMember = memberRepository.findByEmail(member.getEmail());
-        if (findMember != null) {
+        Optional<Member> findMember = memberRepository.findByEmail(member.getEmail());
+        if (findMember.isPresent()) {
             throw new IllegalStateException("이미 가입된 이메일입니다.");
         }
     }
 
-    public Member getMember(String email) {
+    public Optional<Member> findByEmail(String email) {
         return memberRepository.findByEmail(email);
     }
 }
