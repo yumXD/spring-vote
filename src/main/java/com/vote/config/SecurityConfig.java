@@ -7,6 +7,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -22,11 +23,7 @@ public class SecurityConfig {
         log.info("스프링 시큐리티 설정 로드...");
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                .headers(headers ->
-                        headers.cacheControl(cacheControlConfig ->
-                                cacheControlConfig.disable()
-                        )
-                )
+                .headers((headers) -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
         ;
 
         http
@@ -47,12 +44,25 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
-                                .requestMatchers("/css/**", "/js/**", "/img/**", "/", "/members/**", "/images/**").permitAll()
-                                .requestMatchers("/election/**", "/elections/**").permitAll()
-                                .requestMatchers("/admin/**").hasRole("ADMIN")
+                                .requestMatchers(
+                                        new AntPathRequestMatcher("/css/**"),
+                                        new AntPathRequestMatcher("/js/**"),
+                                        new AntPathRequestMatcher("/img/**"),
+                                        new AntPathRequestMatcher("/members/**"),
+                                        new AntPathRequestMatcher("/images/**")
+                                ).permitAll()
+                                .requestMatchers(
+                                        new AntPathRequestMatcher("/"),
+                                        new AntPathRequestMatcher("/election/**"),
+                                        new AntPathRequestMatcher("/elections/**")
+                                ).permitAll()
+                                .requestMatchers(
+                                        new AntPathRequestMatcher("/admin/**")
+                                ).hasRole("ADMIN")
                                 .anyRequest().authenticated()
                 )
         ;
+
         return http.build();
     }
 
