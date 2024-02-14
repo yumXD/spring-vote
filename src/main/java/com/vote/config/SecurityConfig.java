@@ -29,14 +29,14 @@ public class SecurityConfig {
         http
                 .formLogin(formLogin ->
                         formLogin
-                                .loginPage("/members/login")
+                                .loginPage("/users/login")
                                 .defaultSuccessUrl("/")
                                 .usernameParameter("email")
-                                .failureUrl("/members/login/error")
+                                .failureUrl("/users/login/error")
                 )
                 .logout(logout ->
                         logout
-                                .logoutRequestMatcher(new AntPathRequestMatcher("/members/logout"))
+                                .logoutRequestMatcher(new AntPathRequestMatcher("/users/logout"))
                                 .logoutSuccessUrl("/")
                 )
         ;
@@ -48,11 +48,11 @@ public class SecurityConfig {
                                         new AntPathRequestMatcher("/css/**"),
                                         new AntPathRequestMatcher("/js/**"),
                                         new AntPathRequestMatcher("/img/**"),
-                                        new AntPathRequestMatcher("/members/**"),
                                         new AntPathRequestMatcher("/images/**")
                                 ).permitAll()
                                 .requestMatchers(
                                         new AntPathRequestMatcher("/"),
+                                        new AntPathRequestMatcher("/users/**"),
                                         new AntPathRequestMatcher("/election/**"),
                                         new AntPathRequestMatcher("/elections/**")
                                 ).permitAll()

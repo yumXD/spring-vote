@@ -1,8 +1,8 @@
 package com.vote.controller;
 
-import com.vote.dto.MemberFormDto;
-import com.vote.entity.Member;
-import com.vote.service.MemberService;
+import com.vote.dto.UserFormDto;
+import com.vote.entity.Users;
+import com.vote.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,52 +18,52 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 @RequiredArgsConstructor
 @Slf4j
-@RequestMapping("/members")
-public class MemberController {
-    private final MemberService memberService;
+@RequestMapping("/users")
+public class UserController {
+    private final UserService userService;
     private final PasswordEncoder passwordEncoder;
 
     @GetMapping("/new")
-    public String memberForm(Model model) {
+    public String userForm(Model model) {
         log.info("회원가입 페이지");
-        model.addAttribute("memberFormDto", new MemberFormDto());
-        return "member/memberForm";
+        model.addAttribute("userFormDto", new UserFormDto());
+        return "user/userForm";
     }
 
     @PostMapping("/new")
-    public String memberForm(@Valid MemberFormDto memberFormDto,
-                             BindingResult bindingResult,
-                             Model model,
-                             RedirectAttributes redirectAttributes) {
+    public String userForm(@Valid UserFormDto userFormDto,
+                           BindingResult bindingResult,
+                           Model model,
+                           RedirectAttributes redirectAttributes) {
 
         if (bindingResult.hasErrors()) {
             log.error("회원가입 에러");
-            return "member/memberForm";
+            return "user/userForm";
         }
 
         try {
-            Member member = Member.createMember(memberFormDto, passwordEncoder);
-            memberService.savedMember(member);
+            Users users = Users.createUser(userFormDto, passwordEncoder);
+            userService.saveUser(users);
             log.info("회원가입 성공");
         } catch (IllegalStateException ex) {
             log.error("이메일 중복 예외 발생");
             model.addAttribute("errorMessage", ex.getMessage());
-            return "member/memberForm";
+            return "user/userForm";
         }
         redirectAttributes.addFlashAttribute("successMessage", "회원가입 성공하였습니다.");
-        return "redirect:/members/login";
+        return "redirect:/users/login";
     }
 
     @GetMapping("/login")
-    public String loginMember() {
+    public String loginUser() {
         log.info("로그인 페이지");
-        return "/member/memberLoginForm";
+        return "/user/userLoginForm";
     }
 
     @GetMapping("/login/error")
     public String loginError(Model model) {
         log.error("로그인 에러");
         model.addAttribute("loginErrorMsg", "아이디 또는 비밀번호를 확인해주세요.");
-        return "/member/memberLoginForm";
+        return "/user/userLoginForm";
     }
 }

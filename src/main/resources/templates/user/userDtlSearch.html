@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{layouts/layout1}"
+>
+<div layout:fragment="content">
+    <div class="container mt-5">
+        <h2 class="mb-4">회원 정보</h2>
+
+        <table class="table table-bordered">
+            <tbody>
+            <tr>
+                <td><strong>회원 이름:</strong></td>
+                <td th:text="${userFormDto.name}"></td>
+            </tr>
+            <tr>
+                <td><strong>회원 이메일:</strong></td>
+                <td th:text="${userFormDto.email}"></td>
+            </tr>
+            <tr>
+                <td><strong>회원 주소:</strong></td>
+                <td th:text="${userFormDto.address}"></td>
+            </tr>
+            <tr>
+                <td><strong>회원 생일:</strong></td>
+                <td th:text="${userFormDto.birth}"></td>
+            </tr>
+            </tbody>
+        </table>
+        <button
+                type="button"
+                class="btn btn-primary"
+                th:onclick="'location.href=\'/admin/users/' + ${userFormDto.id} + '/update-pw\''"
+        >
+            비밀번호 수정
+        </button>
+    </div>
+</div>
+</html>

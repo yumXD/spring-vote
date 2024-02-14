@@ -7,5 +7,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface VoteRepository extends JpaRepository<Vote, Long>, QuerydslPredicateExecutor<Vote>, VoteRepositoryCustom {
-    Vote findByElectionIdAndMemberId(Long electionId, Long memberId);
+    Vote findByElectionIdAndUsersId(Long electionId, Long usersId);
 }

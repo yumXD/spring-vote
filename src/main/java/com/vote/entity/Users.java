@@ -1,7 +1,7 @@
 package com.vote.entity;
 
 import com.vote.constant.Role;
-import com.vote.dto.MemberFormDto;
+import com.vote.dto.UserFormDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,13 +18,13 @@ import java.util.Collections;
 import java.util.List;
 
 @Entity
-@Table(name = "member")
+@Table(name = "user")
 @Getter
 @Setter
 @ToString
-public class Member extends BaseEntity implements UserDetails {
+public class Users implements UserDetails {
     @Id
-    @Column(name = "member_id")
+    @Column(name = "user_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -42,36 +42,37 @@ public class Member extends BaseEntity implements UserDetails {
 
     private LocalDate birth;
 
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "users", cascade = CascadeType.ALL)
     private List<Election> elections = new ArrayList<>();
 
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "users", cascade = CascadeType.ALL)
     private List<Vote> votes = new ArrayList<>();
 
-    public void addElection(Election election) {
-        elections.add(election);
-        election.setMember(this);
-    }
-
-    public static Member createMember(MemberFormDto memberFormDto, PasswordEncoder passwordEncoder) {
-        Member member = new Member();
-        member.setUsername(memberFormDto.getName());
-        member.setEmail(memberFormDto.getEmail());
-        member.setAddress(memberFormDto.getAddress());
-        String password = passwordEncoder.encode(memberFormDto.getPassword());
-        member.setPassword(password);
-        member.setBirth(memberFormDto.getBirth());
-        member.setRole(Role.ADMIN);
-        return member;
-    }
-
-    public void addVote(Vote vote) {
-        votes.add(vote);
-        vote.setMember(this);
+    public static Users createUser(UserFormDto userFormDto, PasswordEncoder passwordEncoder) {
+        Users users = new Users();
+        users.setUsername(userFormDto.getName());
+        users.setEmail(userFormDto.getEmail());
+        users.setAddress(userFormDto.getAddress());
+        String password = passwordEncoder.encode(userFormDto.getPassword());
+        users.setPassword(password);
+        users.setBirth(userFormDto.getBirth());
+        users.setRole(Role.ADMIN);
+        return users;
     }
 
     public void updatePassword(String password, PasswordEncoder passwordEncoder) {
         this.password = passwordEncoder.encode(password);
+    }
+
+
+    public void addElection(Election election) {
+        elections.add(election);
+        election.setUsers(this);
+    }
+
+    public void addVote(Vote vote) {
+        votes.add(vote);
+        vote.setUsers(this);
     }
 
     @Override
@@ -79,9 +80,11 @@ public class Member extends BaseEntity implements UserDetails {
         // 사용자의 권한을 반환합니다.
         return Collections.singleton(new SimpleGrantedAuthority("ROLE_" + role.toString()));
     }
+
     public String getActualUsername() {
         return username;
     }
+
     @Override
     public String getUsername() {
         return email;

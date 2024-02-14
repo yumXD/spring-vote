@@ -4,7 +4,7 @@ import com.vote.dto.CandidateSearchDto;
 import com.vote.dto.ElectionFormDto;
 import com.vote.entity.Candidate;
 import com.vote.entity.Election;
-import com.vote.entity.Member;
+import com.vote.entity.Users;
 import com.vote.exception.AccessAllowedException;
 import com.vote.exception.ElectionInProgressException;
 import com.vote.repository.ElectionRepository;
@@ -23,16 +23,16 @@ import java.util.List;
 public class ElectionService {
     private final ElectionRepository electionRepository;
 
-    private final MemberService memberService;
+    private final UserService userService;
 
     public Election saveElection(ElectionFormDto electionFormDto, String email) {
         //회원 찾기
-        Member member = memberService.findByEmail(email).orElseThrow(() -> new IllegalStateException("존재하지 않는 회원입니다."));
+        Users users = userService.findByEmail(email).orElseThrow(() -> new IllegalStateException("존재하지 않는 회원입니다."));
 
         //선거 등록
         Election election = electionFormDto.toEntity();
 
-        member.addElection(election);
+        users.addElection(election);
 
         electionRepository.save(election);
 
@@ -69,7 +69,7 @@ public class ElectionService {
 
     public String getEmail(Long electionId) {
         Election election = findById(electionId);
-        return election.getMember().getEmail();
+        return election.getUsers().getEmail();
     }
 
     public Election updateElection(ElectionFormDto electionFormDto) {
@@ -85,7 +85,7 @@ public class ElectionService {
 
     public void isAccessAllowed(Long electionId, String email) {
         Election election = findById(electionId);
-        if (!election.getMember().getEmail().equals(email)) {
+        if (!election.getUsers().getEmail().equals(email)) {
             throw new AccessAllowedException("접근 권한이 없습니다.");
         }
     }

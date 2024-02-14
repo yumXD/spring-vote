@@ -29,7 +29,7 @@
   </th:block>
 
   <div layout:fragment="content">
-    <form role="form" method="post" th:object="${memberFormDto}">
+    <form role="form" method="post" th:object="${userFormDto}">
       <div class="form-group">
         <label th:for="name">이름</label>
         <input
@@ -37,7 +37,7 @@
           th:field="*{name}"
           class="form-control"
           placeholder="이름을 입력해주세요"
-          th:readonly="${memberId != null ? 'readonly' : null}"
+          th:readonly="${userId != null ? 'readonly' : null}"
           required
         />
         <p
@@ -55,7 +55,7 @@
           th:field="*{email}"
           class="form-control"
           placeholder="이메일을 입력해주세요"
-          th:readonly="${memberId != null ? 'readonly' : null}"
+          th:readonly="${userId != null ? 'readonly' : null}"
           required
         />
         <p
@@ -90,7 +90,7 @@
           th:field="*{address}"
           class="form-control"
           placeholder="주소를 입력해주세요"
-          th:readonly="${memberId != null ? 'readonly' : null}"
+          th:readonly="${userId != null ? 'readonly' : null}"
           required
         />
         <p
@@ -110,7 +110,7 @@
               th:field="*{birth}"
               class="form-control"
               placeholder="날짜를 선택해주세요"
-              th:readonly="${memberId != null ? 'readonly' : null}"
+              th:readonly="${userId != null ? 'readonly' : null}"
               required
             />
             <p
@@ -123,18 +123,18 @@
           </div>
         </div>
       </div>
-      <div th:if="${#strings.isEmpty(memberId)}" style="text-align: center">
+      <div th:if="${#strings.isEmpty(userId)}" style="text-align: center">
         <button
-          th:formaction="@{/members/new}"
+          th:formaction="@{/users/new}"
           type="submit"
           class="btn btn-primary"
         >
           가입
         </button>
       </div>
-      <div th:unless="${#strings.isEmpty(memberId)}" style="text-align: center">
+      <div th:unless="${#strings.isEmpty(userId)}" style="text-align: center">
         <button
-          th:formaction="@{'/admin/member/' + ${memberId}+'/update-pw' }"
+          th:formaction="@{'/admin/users/' + ${userId}+'/update-pw' }"
           type="submit"
           class="btn btn-primary"
         >

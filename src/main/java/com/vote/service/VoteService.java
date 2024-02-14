@@ -3,7 +3,7 @@ package com.vote.service;
 import com.vote.dto.CandidatesVoteSearchDto;
 import com.vote.entity.Candidate;
 import com.vote.entity.Election;
-import com.vote.entity.Member;
+import com.vote.entity.Users;
 import com.vote.entity.Vote;
 import com.vote.exception.DuplicateVoteException;
 import com.vote.exception.ElectionInProgressException;
@@ -22,26 +22,26 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class VoteService {
     private final VoteRepository voteRepository;
-    private final MemberService memberService;
+    private final UserService userService;
     private final ElectionService electionService;
     private final CandidateService candidateService;
 
 
     public Vote doVote(String email, Long electionId, Long candidateId) {
-        Member member = memberService.findByEmail(email).orElseThrow(() -> new EntityNotFoundException("존재하지 않는 회원입니다."));
+        Users users = userService.findByEmail(email).orElseThrow(() -> new EntityNotFoundException("존재하지 않는 회원입니다."));
         Election election = electionService.findById(electionId);
         Candidate candidate = candidateService.findById(candidateId);
 
         //중복 투표 체크..
-        isVoted(electionId, member);
+        isVoted(electionId, users);
 
-        Vote vote = Vote.createVote(member, election, candidate);
+        Vote vote = Vote.createVote(users, election, candidate);
         voteRepository.save(vote);
         return vote;
     }
 
-    public void isVoted(Long electionId, Member member) {
-        Vote findVote = voteRepository.findByElectionIdAndMemberId(electionId, member.getId());
+    public void isVoted(Long electionId, Users users) {
+        Vote findVote = voteRepository.findByElectionIdAndUsersId(electionId, users.getId());
         if (findVote != null) {
             throw new DuplicateVoteException("이미 투표했습니다.");
         }
