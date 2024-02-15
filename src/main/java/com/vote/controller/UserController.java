@@ -25,7 +25,7 @@ public class UserController {
 
     @GetMapping("/new")
     public String userForm(Model model) {
-        log.info("회원가입 페이지");
+        model.addAttribute("title", "회원가입");
         model.addAttribute("userFormDto", new UserFormDto());
         return "user/userForm";
     }
@@ -38,6 +38,7 @@ public class UserController {
 
         if (bindingResult.hasErrors()) {
             log.error("회원가입 에러");
+            model.addAttribute("title", "회원가입");
             return "user/userForm";
         }
 
@@ -47,22 +48,24 @@ public class UserController {
             log.info("회원가입 성공");
         } catch (IllegalStateException ex) {
             log.error("이메일 중복 예외 발생");
+            model.addAttribute("title", "회원가입");
             model.addAttribute("errorMessage", ex.getMessage());
             return "user/userForm";
         }
+
         redirectAttributes.addFlashAttribute("successMessage", "회원가입 성공하였습니다.");
         return "redirect:/users/login";
     }
 
     @GetMapping("/login")
-    public String loginUser() {
-        log.info("로그인 페이지");
+    public String loginUser(Model model) {
+        model.addAttribute("title", "로그인");
         return "/user/userLoginForm";
     }
 
     @GetMapping("/login/error")
     public String loginError(Model model) {
-        log.error("로그인 에러");
+        model.addAttribute("title", "로그인");
         model.addAttribute("loginErrorMsg", "아이디 또는 비밀번호를 확인해주세요.");
         return "/user/userLoginForm";
     }

@@ -26,8 +26,13 @@
     </script>
   </th:block>
 
-  <div layout:fragment="content">
-    <form role="form" method="post" action="/users/login">
+  <div layout:fragment="content" class="mt-5">
+    <form
+      role="form"
+      method="post"
+      action="/users/login"
+      class="col-md-6 mx-auto"
+    >
       <div class="form-group">
         <label th:for="email">이메일</label>
         <input
@@ -50,10 +55,10 @@
         />
       </div>
       <p th:if="${loginErrorMsg}" class="error" th:text="${loginErrorMsg}"></p>
-      <button class="btn btn-primary">로그인</button>
+      <button class="btn btn-primary btn-block">로그인</button>
       <button
         type="button"
-        class="btn btn-primary"
+        class="btn btn-primary btn-block mt-3"
         onClick="location.href='/users/new'"
       >
         회원가입
