@@ -7,7 +7,9 @@ import com.vote.entity.Users;
 import com.vote.entity.Vote;
 import com.vote.exception.DuplicateVoteException;
 import com.vote.exception.ElectionInProgressException;
+import com.vote.repository.UserRepositoryCustom;
 import com.vote.repository.VoteRepository;
+import com.vote.repository.VoteRepositoryCustom;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,13 +25,14 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class VoteService {
     private final VoteRepository voteRepository;
-    private final UserService userService;
+    private final UserRepositoryCustom userRepositoryCustom;
+    private final VoteRepositoryCustom voteRepositoryCustom;
     private final ElectionService electionService;
     private final CandidateService candidateService;
 
 
     public Vote doVote(String email, Long electionId, Long candidateId) {
-        Users users = userService.findByEmail(email).orElseThrow(() -> new EntityNotFoundException("존재하지 않는 회원입니다."));
+        Users users = userRepositoryCustom.findByEmail(email).orElseThrow(() -> new EntityNotFoundException("존재하지 않는 회원입니다."));
         Election election = electionService.findById(electionId);
         Candidate candidate = candidateService.findById(candidateId);
 
@@ -41,8 +45,8 @@ public class VoteService {
     }
 
     public void isVoted(Long electionId, Users users) {
-        Vote findVote = voteRepository.findByElectionIdAndUsersId(electionId, users.getId());
-        if (findVote != null) {
+        Optional<Vote> findVote = voteRepositoryCustom.findByElectionIdAndUsersId(electionId, users.getId());
+        if (findVote.isPresent()) {
             throw new DuplicateVoteException("이미 투표했습니다.");
         }
     }
@@ -52,7 +56,7 @@ public class VoteService {
         //투표가 종료되었는지..
         isVotingFinished(electionId);
 
-        Long totalVotesForElection = voteRepository.findElectionTotalVotes(electionId);
+        Long totalVotesForElection = voteRepositoryCustom.findElectionTotalVotes(electionId);
         if (totalVotesForElection == null) {
             return 0L;
         }
@@ -73,7 +77,7 @@ public class VoteService {
 
     // 각 선거의 후보자들의 득표수 가져오기
     public List<CandidatesVoteSearchDto> getCandidateVoteStatistics(Long electionId) {
-        return voteRepository.findCandidateVoteStatistics(electionId);
+        return voteRepositoryCustom.findCandidateVoteStatistics(electionId);
     }
 
     // 최고 득표자를 가져오기

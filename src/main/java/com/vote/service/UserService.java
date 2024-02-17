@@ -3,6 +3,7 @@ package com.vote.service;
 import com.vote.dto.UserFormDto;
 import com.vote.entity.Users;
 import com.vote.repository.UserRepository;
+import com.vote.repository.UserRepositoryCustom;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -22,6 +23,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
+    private final UserRepositoryCustom userRepositoryCustom;
 
     public Users saveUser(Users users) {
         validateDuplicateEmail(users);
@@ -29,28 +31,24 @@ public class UserService {
     }
 
     private void validateDuplicateEmail(Users users) {
-        Optional<Users> findMember = userRepository.findByEmail(users.getEmail());
+        Optional<Users> findMember = userRepositoryCustom.findByEmail(users.getEmail());
         if (findMember.isPresent()) {
             throw new IllegalStateException("이미 가입된 이메일입니다.");
         }
     }
 
-    public Optional<Users> findByEmail(String email) {
-        return userRepository.findByEmail(email);
-    }
-
-    public Page<Users> getAdminUserPage(int page, String kw) {
+    public Page<Users> getUserDetails(int page, String kw) {
         List<Sort.Order> sorts = new ArrayList<>();
         //sorts.add(Sort.Order.desc("regTime"));
         Pageable pageable = PageRequest.of(page, 10, Sort.by(sorts));
-        return this.userRepository.findAllByKeyword(kw, pageable);
+        return this.userRepositoryCustom.findAllByKeyword(kw, pageable);
     }
 
     public Users findById(Long id) {
         return userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("존재하지 않는 회원 정보입니다."));
     }
 
-    public UserFormDto getUserDtl(Long memberId) {
+    public UserFormDto getUserDetail(Long memberId) {
         Users users = findById(memberId);
         return UserFormDto.of(users);
     }

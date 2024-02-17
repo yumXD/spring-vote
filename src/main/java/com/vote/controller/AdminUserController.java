@@ -28,7 +28,7 @@ public class AdminUserController {
                        @RequestParam(value = "page", defaultValue = "0") int page,
                        @RequestParam(value = "kw", defaultValue = "") String kw) {
         model.addAttribute("title", "회원 조회");
-        Page<Users> users = this.userService.getAdminUserPage(page, kw);
+        Page<Users> users = this.userService.getUserDetails(page, kw);
         model.addAttribute("kw", kw);
         model.addAttribute("users", users);
         return "user/userMng";
@@ -39,7 +39,7 @@ public class AdminUserController {
                                 Model model,
                                 RedirectAttributes redirectAttributes) {
         try {
-            UserFormDto userFormDto = userService.getUserDtl(userId);
+            UserFormDto userFormDto = userService.getUserDetail(userId);
             model.addAttribute("title", userFormDto.getName() + " 회원 정보");
             model.addAttribute("userFormDto", userFormDto);
         } catch (EntityNotFoundException ex) {
@@ -55,7 +55,7 @@ public class AdminUserController {
                                Model model,
                                RedirectAttributes redirectAttributes) {
         try {
-            UserFormDto userFormDto = userService.getUserDtl(userId);
+            UserFormDto userFormDto = userService.getUserDetail(userId);
             model.addAttribute("title", userFormDto.getName() + " 회원 수정");
             model.addAttribute("userFormDto", userFormDto);
         } catch (EntityNotFoundException ex) {

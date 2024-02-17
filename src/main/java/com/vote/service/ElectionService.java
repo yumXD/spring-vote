@@ -8,6 +8,8 @@ import com.vote.entity.Users;
 import com.vote.exception.AccessAllowedException;
 import com.vote.exception.ElectionInProgressException;
 import com.vote.repository.ElectionRepository;
+import com.vote.repository.ElectionRepositoryCustom;
+import com.vote.repository.UserRepositoryCustom;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -23,11 +25,12 @@ import java.util.List;
 public class ElectionService {
     private final ElectionRepository electionRepository;
 
-    private final UserService userService;
+    private final UserRepositoryCustom userRepositoryCustom;
+    private final ElectionRepositoryCustom electionRepositoryCustom;
 
     public Election saveElection(ElectionFormDto electionFormDto, String email) {
         //회원 찾기
-        Users users = userService.findByEmail(email).orElseThrow(() -> new IllegalStateException("존재하지 않는 회원입니다."));
+        Users users = userRepositoryCustom.findByEmail(email).orElseThrow(() -> new IllegalStateException("존재하지 않는 회원입니다."));
 
         //선거 등록
         Election election = electionFormDto.toEntity();
@@ -59,7 +62,7 @@ public class ElectionService {
 
     @Transactional(readOnly = true)
     public Page<Election> getAdminCandidatePage(CandidateSearchDto candidateSearchDto, Pageable pageable) {
-        return electionRepository.getAdminElectionPage(candidateSearchDto, pageable);
+        return electionRepositoryCustom.getAdminElectionPage(candidateSearchDto, pageable);
     }
 
     public List<Candidate> getCandidates(Long electionId) {

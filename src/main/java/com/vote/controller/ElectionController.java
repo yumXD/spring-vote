@@ -65,7 +65,7 @@ public class ElectionController {
     @GetMapping(value = {"/elections", "/elections/{page}"})
     public String candidateManage(CandidateSearchDto candidateSearchDto, @PathVariable("page") Optional<Integer> page, Model model) {
         log.info("선거 전체 조회 페이지네이션");
-        Pageable pageable = PageRequest.of(page.isPresent() ? page.get() : 0, 10);
+        Pageable pageable = PageRequest.of(page.isPresent() ? page.get() : 0, 5);
         Page<Election> elections = electionService.getAdminCandidatePage(candidateSearchDto, pageable);
         model.addAttribute("elections", elections);
         model.addAttribute("candidateSearchDto", candidateSearchDto);
